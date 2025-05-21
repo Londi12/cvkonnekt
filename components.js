@@ -176,36 +176,16 @@ const RegisterModal = ({ isOpen, onClose, onRegister }) => {
 // Navbar component
 const Navbar = ({ currentPage = 'home' }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
-  const [loginModalOpen, setLoginModalOpen] = React.useState(false);
-  const [registerModalOpen, setRegisterModalOpen] = React.useState(false);
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-  const [user, setUser] = React.useState({ name: '', email: '' });
+  const [donationModalOpen, setDonationModalOpen] = React.useState(false);
+  const [donationThankYouOpen, setDonationThankYouOpen] = React.useState(false);
   
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
-
-  const handleLogin = (email, password) => {
-    // In a real app, this would be an API call
-    console.log('Login attempt:', email, password);
-    // Mock successful login
-    setUser({ name: email.split('@')[0], email: email });
-    setIsLoggedIn(true);
-    setLoginModalOpen(false);
-  };
-
-  const handleRegister = (name, email, password) => {
-    // In a real app, this would be an API call
-    console.log('Register attempt:', name, email, password);
-    // Mock successful registration
-    setUser({ name: name, email: email });
-    setIsLoggedIn(true);
-    setRegisterModalOpen(false);
-  };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUser({ name: '', email: '' });
+  
+  // Set up a global function to open the donation modal from anywhere
+  window.openDonationModal = () => {
+    setDonationModalOpen(true);
   };
   
   return (    <React.Fragment>
@@ -247,8 +227,7 @@ const Navbar = ({ currentPage = 'home' }) => {
             >
               Contact
             </a>
-          </div>
-          <div className="flex items-center">
+          </div>          <div className="flex items-center">
             <div className="md:hidden mr-4">
               <button className="focus:outline-none" onClick={toggleMobileMenu}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -256,39 +235,16 @@ const Navbar = ({ currentPage = 'home' }) => {
                 </svg>
               </button>
             </div>
-            <div className="relative group">
-              <button 
-                className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 hover:bg-blue-500 transition-colors focus:outline-none"
-                onClick={() => setLoginModalOpen(!loginModalOpen)}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                </svg>
-              </button>
-              <div className="absolute right-0 top-10 w-48 bg-white text-gray-800 rounded-md shadow-lg py-1 mt-1 z-50 transform scale-95 opacity-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 origin-top-right">
-                {isLoggedIn ? (
-                  <>
-                    <div className="px-4 py-2 text-sm border-b">
-                      <p className="font-medium text-gray-900">{user.name || "User"}</p>
-                      <p className="text-gray-500 text-xs">{user.email || "user@example.com"}</p>
-                    </div>
-                    <a href="#" className="block px-4 py-2 text-sm hover:bg-gray-100">My Resumes</a>
-                    <a href="#" className="block px-4 py-2 text-sm hover:bg-gray-100">Account Settings</a>
-                    <button 
-                      onClick={handleLogout}
-                      className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
-                    >
-                      Sign out
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <a href="#" onClick={(e) => { e.preventDefault(); setLoginModalOpen(true); }} className="block px-4 py-2 text-sm hover:bg-gray-100">Sign in</a>
-                    <a href="#" onClick={(e) => { e.preventDefault(); setRegisterModalOpen(true); }} className="block px-4 py-2 text-sm hover:bg-gray-100">Create account</a>
-                  </>
-                )}
-              </div>
-            </div>
+            {/* Donation Button */}
+            <button 
+              onClick={() => setDonationModalOpen(true)}
+              className="flex items-center px-3 py-1 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition-colors focus:outline-none"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M5 5a3 3 0 015-2.236A3 3 0 0114.83 6H16a2 2 0 110 4h-5V9a1 1 0 10-2 0v1H4a2 2 0 110-4h1.17C5.06 5.687 5 5.35 5 5zm4 1V5a1 1 0 10-2 0v1H5a1 1 0 100 2h2v1a2 2 0 104 0V8h2a1 1 0 100-2h-2V5a2 2 0 10-4 0v1z" clipRule="evenodd" />
+              </svg>
+              <span className="text-sm font-medium">Support Us</span>
+            </button>
           </div>
         </div>
           {/* Mobile Menu */}
@@ -323,22 +279,34 @@ const Navbar = ({ currentPage = 'home' }) => {
             >
               Contact
             </a>
+            <button
+              onClick={() => setDonationModalOpen(true)}
+              className="flex items-center justify-center px-4 py-2 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M5 5a3 3 0 015-2.236A3 3 0 0114.83 6H16a2 2 0 110 4h-5V9a1 1 0 10-2 0v1H4a2 2 0 110-4h1.17C5.06 5.687 5 5.35 5 5zm4 1V5a1 1 0 10-2 0v1H5a1 1 0 100 2h2v1a2 2 0 104 0V8h2a1 1 0 100-2h-2V5a2 2 0 10-4 0v1z" clipRule="evenodd" />
+              </svg>
+              Support Us
+            </button>
           </div>
-        </div>
-      </nav>
+        </div>      </nav>
       
-      {/* Login Modal */}
-      <LoginModal 
-        isOpen={loginModalOpen} 
-        onClose={() => setLoginModalOpen(false)} 
-        onLogin={handleLogin} 
+      {/* Donation Modal */}
+      <DonationModal 
+        isOpen={donationModalOpen} 
+        onClose={() => {
+          setDonationModalOpen(false);
+          // Simulate successful donation sometimes
+          if (Math.random() > 0.5) {
+            setTimeout(() => setDonationThankYouOpen(true), 300);
+          }
+        }} 
       />
       
-      {/* Register Modal */}
-      <RegisterModal 
-        isOpen={registerModalOpen} 
-        onClose={() => setRegisterModalOpen(false)} 
-        onRegister={handleRegister} 
+      {/* Donation Thank You Dialog */}
+      <DonationThankYouDialog
+        isOpen={donationThankYouOpen}
+        onClose={() => setDonationThankYouOpen(false)}
       />
     </React.Fragment>
   );

@@ -38,8 +38,7 @@ const server = http.createServer((req, res) => {
         res.end('Health check OK');
         return;
     }
-    
-    // Handle OPTIONS requests for CORS
+      // Handle OPTIONS requests for CORS
     if (req.method === 'OPTIONS') {
         res.writeHead(204, {
             'Access-Control-Allow-Origin': '*',
@@ -47,6 +46,44 @@ const server = http.createServer((req, res) => {
             'Access-Control-Allow-Headers': 'Content-Type'
         });
         res.end();
+        return;
+    }
+    
+    // Handle donation API endpoint (mock)
+    if (req.url === '/api/donate' && req.method === 'POST') {
+        console.log('Processing donation request');
+        let body = '';
+        
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+        
+        req.on('end', () => {
+            try {
+                const donation = JSON.parse(body);
+                console.log('Donation received:', donation);
+                
+                // In a real app, this would connect to a payment processor
+                // For now, we'll just acknowledge the donation
+                res.writeHead(200, { 
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ 
+                    success: true, 
+                    message: 'Thank you for your donation!',
+                    transactionId: 'mock-' + Math.random().toString(36).substring(2, 15)
+                }));
+            } catch (error) {
+                console.error('Error processing donation:', error);
+                res.writeHead(400, { 
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
+                res.end(JSON.stringify({ success: false, message: 'Invalid donation data' }));
+            }
+        });
+        
         return;
     }
 

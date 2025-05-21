@@ -71,18 +71,17 @@ const HomePage = () => (
             </ul>
           </div>
           <div>
-            <ul className="space-y-4">
-              <li className="flex items-start">
+            <ul className="space-y-4">              <li className="flex items-start">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2 text-green-300 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span>Free basic version with premium features available</span>
+                <span>Completely free with all features available to everyone</span>
               </li>
               <li className="flex items-start">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2 text-green-300 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span>Local job market insights and tips</span>
+                <span>Donations accepted to support ongoing development</span>
               </li>
               <li className="flex items-start">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2 text-green-300 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -144,6 +143,39 @@ const AboutPage = () => (
         </div>
       </div>
       
+      {/* Donation callout section */}
+      <div className="bg-yellow-50 border-yellow-200 border-2 p-8 rounded-lg mb-12">
+        <div className="flex flex-col md:flex-row items-center">
+          <div className="md:w-2/3 mb-6 md:mb-0 md:pr-6">
+            <h2 className="text-2xl font-bold mb-4 text-yellow-700">Support CVKonnekt</h2>
+            <p className="mb-4">
+              CVKonnekt is completely free to use because we believe everyone deserves access to 
+              professional CV tools regardless of their financial situation. We're supported entirely 
+              by donations from users like you who value our service.
+            </p>
+            <p>
+              Your donations help us maintain the platform, develop new features, and keep 
+              CVKonnekt available for all South African job seekers. Even a small contribution 
+              makes a big difference!
+            </p>
+          </div>
+          <div className="md:w-1/3 text-center">
+            <button 
+              onClick={() => window.openDonationModal()}
+              className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-6 py-3 rounded-full text-lg font-semibold hover:from-yellow-600 hover:to-yellow-700 transition duration-300 shadow-md"
+            >
+              <div className="flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M5 5a3 3 0 015-2.236A3 3 0 0114.83 6H16a2 2 0 110 4h-5V9a1 1 0 10-2 0v1H4a2 2 0 110-4h1.17C5.06 5.687 5 5.35 5 5zm4 1V5a1 1 0 10-2 0v1H5a1 1 0 100 2h2v1a2 2 0 104 0V8h2a1 1 0 100-2h-2V5a2 2 0 10-4 0v1z" clipRule="evenodd" />
+                </svg>
+                Donate Now
+              </div>
+            </button>
+            <p className="mt-4 text-sm text-yellow-700">Every donation helps!</p>
+          </div>
+        </div>
+      </div>
+      
       <div className="bg-gradient-to-r from-blue-700 to-green-600 text-white p-8 rounded-lg mb-12">
         <h2 className="text-2xl font-bold mb-6 text-center">Our Values</h2>
         <div className="grid md:grid-cols-3 gap-6">
@@ -174,8 +206,7 @@ const AboutPage = () => (
             <h3 className="text-xl font-bold mb-2">Innovation</h3>
             <p>Continuously improving to meet the evolving needs of the SA job market</p>
           </div>
-        </div>
-      </div>
+        </div>      </div>
       
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-6 text-blue-700">Join Thousands of Successful South African Job Seekers</h2>
@@ -183,7 +214,9 @@ const AboutPage = () => (
           CVKonnekt has helped job seekers across all nine provinces land interviews and secure jobs 
           in every industry. Start building your professional South African CV today!
         </p>
-        <button 
+        
+        <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+          <button
           onClick={() => window.location.hash = '#builder'}
           className="bg-blue-700 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-800 transition duration-300"
         >
@@ -330,10 +363,9 @@ const ContactPage = () => (
         
         <div className="bg-gray-100 p-6 rounded-lg">
           <h2 className="text-2xl font-bold mb-4 text-blue-700">Frequently Asked Questions</h2>
-          <div className="space-y-4">
-            <div>
+          <div className="space-y-4">            <div>
               <h3 className="text-lg font-medium text-gray-900">Is CVKonnekt free to use?</h3>
-              <p className="text-gray-600 mt-1">Yes, CVKonnekt offers a free basic version with essential features. We also offer premium plans with additional templates and advanced features.</p>
+              <p className="text-gray-600 mt-1">Yes, CVKonnekt is completely free to use with all features available to everyone. We're supported by donations from users who value our service.</p>
             </div>
             <div>
               <h3 className="text-lg font-medium text-gray-900">How do I download my CV?</h3>
@@ -491,15 +523,13 @@ const TemplatesPage = () => (
             </div>
           </div>
         </div>
-        
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-6 text-blue-700">Premium Templates</h2>
+          <div className="text-center">
+          <h2 className="text-2xl font-bold mb-6 text-blue-700">All Templates Are Free!</h2>
           <p className="text-lg mb-8 max-w-3xl mx-auto">
-            Unlock our premium templates designed by professional CV experts with experience in academic and research publishing.
+            All our templates designed by professional CV experts are completely free, including Harvard Style templates for academic and research professionals.
           </p>
-          <button className="bg-gradient-to-r from-blue-700 to-green-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:opacity-90 transition duration-300">
-            Upgrade to Premium
-          </button>
+          <DonationButton size="lg" />
+          <p className="mt-4 text-gray-600">Your donations help us maintain and improve CVKonnekt</p>
         </div>
       </div>
     </div>
