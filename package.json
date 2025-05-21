@@ -1,0 +1,29 @@
+{
+  "name": "cvkonnekt",
+  "version": "1.0.0",
+  "description": "CV Builder for South Africans",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "azure-start": "bash startup.sh",
+    "prestart": "echo \"Preparing application...\"",
+    "postinstall": "echo \"Installation complete\""
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "resume",
+    "cv",
+    "builder",
+    "south africa"
+  ],
+  "author": "CVKonnekt",
+  "license": "ISC",
+  "dependencies": {
+    "http": "0.0.1-security",
+    "fs": "0.0.1-security",
+    "path": "0.0.1-security"
+  }
+}

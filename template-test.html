@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Template Selection Test</title>
+  <script>
+    // Function to simulate clicking "Use Template" 
+    function useTemplate(template, category) {
+      // Store template selection in localStorage
+      localStorage.setItem('selectedTemplate', template);
+      localStorage.setItem('selectedCategory', category);
+      
+      // Log what was stored
+      console.log(`Stored template selection: ${template}, category: ${category}`);
+      document.getElementById('stored').textContent = 
+        `Stored in localStorage: template=${template}, category=${category}`;
+      
+      // Simulate what happens in ResumeBuilder component
+      checkTemplateSelection();
+    }
+    
+    // Function to simulate ResumeBuilder useEffect
+    function checkTemplateSelection() {
+      // Check if a template was selected
+      const selectedTemplate = localStorage.getItem('selectedTemplate');
+      const wasTemplateSelected = selectedTemplate !== null;
+      
+      document.getElementById('check').textContent = 
+        `Was template selected? ${wasTemplateSelected ? 'YES - ' + selectedTemplate : 'NO'}`;
+      
+      // Simulate the auto-advancing logic
+      if (wasTemplateSelected) {
+        document.getElementById('action').textContent = 
+          "✅ Template detected! Would advance to Personal Information step.";
+      } else {
+        document.getElementById('action').textContent = 
+          "❌ No template detected. Would stay on Template Selection step.";
+      }
+      
+      // Clear localStorage as done in the component
+      localStorage.removeItem('selectedTemplate');
+      localStorage.removeItem('selectedCategory');
+      document.getElementById('cleared').textContent = "localStorage cleared after check.";
+      
+      // Check current localStorage state
+      const remainingTemplate = localStorage.getItem('selectedTemplate');
+      document.getElementById('after').textContent = 
+        `After clearing, template in localStorage: ${remainingTemplate !== null ? remainingTemplate : 'null'}`;
+    }
+    
+    // Clear on page load
+    window.onload = function() {
+      localStorage.removeItem('selectedTemplate');
+      localStorage.removeItem('selectedCategory');
+    };
+  </script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    h1 { color: #1e40af; }
+    .result { margin: 20px 0; padding: 10px; background: #f0f9ff; border-radius: 5px; }
+    button { 
+      background: #1e40af; color: white; 
+      padding: 10px 15px; border: none; 
+      border-radius: 5px; cursor: pointer;
+      margin-right: 10px;
+    }
+    button:hover { background: #1e3a8a; }
+  </style>
+</head>
+<body>
+  <h1>Template Selection Test</h1>
+  <p>This page tests the template selection functionality. Click a button to simulate selecting a template.</p>
+  
+  <div>
+    <button onclick="useTemplate('Executive', 'professional')">Use Executive Template</button>
+    <button onclick="useTemplate('Modern', 'creative')">Use Modern Template</button>
+    <button onclick="checkTemplateSelection()">Just Check Current Selection</button>
+  </div>
+  
+  <div class="result">
+    <h3>Results:</h3>
+    <p id="stored">No template stored yet</p>
+    <p id="check">Template check not run yet</p>
+    <p id="action">No action taken yet</p>
+    <p id="cleared">localStorage not cleared yet</p>
+    <p id="after">Current state not checked yet</p>
+  </div>
+  
+  <p><strong>Note:</strong> Open the browser console (F12) to see additional logs.</p>
+</body>
+</html>

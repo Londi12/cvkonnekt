@@ -52,4 +52,58 @@ If you encounter any issues:
 - Verify that templates.js is properly loaded before app.js in index.html
 - Clear browser cache or use incognito mode to test changes
 - If needed, run the fix script again: `powershell -ExecutionPolicy Bypass -File "fix-resume-builder.ps1"`
-# CVKonnekt
+# CVKonnekt - Resume Builder for South Africans
+
+A professional resume/CV builder designed specifically for South African job seekers.
+
+## Features
+
+- Multiple professional resume templates
+- Step-by-step resume building process
+- Mobile-friendly design
+- Export to PDF
+- No account required - all data is stored locally in your browser
+
+## Technologies Used
+
+- HTML5/CSS3
+- JavaScript
+- React
+- Node.js
+
+## Local Development
+
+To run this project locally:
+
+1. Clone the repository
+   ```bash
+   git clone https://github.com/Londi12/cvkonnekt.git
+   ```
+
+2. Navigate to the project directory
+   ```bash
+   cd cvkonnekt
+   ```
+
+3. Start the local server
+   ```bash
+   node server.js
+   ```
+
+4. Open your browser and visit http://localhost:8080
+
+## Azure Deployment
+
+This project is deployed on Azure App Service. The deployment includes:
+
+- Custom server configurations for Azure
+- Health check endpoints
+- Environment-specific settings
+
+## License
+
+ISC
+
+## Contact
+
+For questions or support, please create an issue in this repository.

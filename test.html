@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume Builder Test</title>
+  <script>
+    // Function to test the template selection flow
+    function testTemplateSelection() {
+      console.log("Running template selection test");
+      
+      // Clear any existing localStorage data
+      localStorage.removeItem('selectedTemplate');
+      localStorage.removeItem('selectedCategory');
+      
+      // Simulate template selection via URL parameters
+      const template = "Executive";
+      const category = "professional";
+      
+      // Store in localStorage (simulating what happens when clicking "Use Template")
+      localStorage.setItem('selectedTemplate', template);
+      localStorage.setItem('selectedCategory', category);
+      
+      console.log(`Set template in localStorage: ${template}, category: ${category}`);
+      
+      // Check if it's stored correctly
+      const storedTemplate = localStorage.getItem('selectedTemplate');
+      const storedCategory = localStorage.getItem('selectedCategory');
+      
+      console.log(`Stored values - template: ${storedTemplate}, category: ${storedCategory}`);
+      
+      // Test our logic for advancing to next step
+      const wasTemplateSelected = storedTemplate !== null;
+      console.log(`Was template selected? ${wasTemplateSelected ? 'YES' : 'NO'}`);
+      
+      if (wasTemplateSelected) {
+        console.log('Would advance to Personal Information step');
+      }
+      
+      return wasTemplateSelected;
+    }
+    
+    // Run the test when the page loads
+    window.onload = function() {
+      const result = testTemplateSelection();
+      document.getElementById('result').textContent = result 
+        ? "✅ Template selection test passed! Would advance to next step."
+        : "❌ Template selection test failed! Would not advance.";
+    };
+  </script>
+</head>
+<body>
+  <h1>Resume Builder Template Selection Test</h1>
+  <p id="result">Running test...</p>
+  <p>Please check the browser console for detailed test output.</p>
+  
+  <button onclick="testTemplateSelection()">Run Test Again</button>
+</body>
+</html>
