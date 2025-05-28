@@ -8,7 +8,7 @@
     "server": "nodemon improved-server.js",
     "client": "vite",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "build": "vite build",
+    "build": "node scripts/check-supabase-config.js && vite build",
     "preview": "vite preview",
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
@@ -19,7 +19,8 @@
     "postinstall": "npm run build",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "generate-icons": "node scripts/generate-icons.js"
+    "generate-icons": "node scripts/generate-icons.js",
+    "check-supabase": "node scripts/check-supabase-config.js"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -37,6 +38,7 @@
     "@azure/identity": "4.10.0",
     "@azure/storage-blob": "12.27.0",
     "@headlessui/react": "^1.7.18",
+    "@supabase/supabase-js": "2.49.8",
     "@tailwindcss/postcss": "4.1.7",
     "compression": "1.8.0",
     "cors": "2.8.5",
@@ -66,11 +68,19 @@
   },
   "homepage": "https://github.com/Londi12/cvkonnekt#readme",
   "devDependencies": {
+    "@babel/preset-env": "7.27.2",
+    "@babel/preset-react": "7.27.1",
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "16.3.0",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "10.4.21",
+    "babel-jest": "30.0.0-beta.3",
     "concurrently": "9.1.2",
+    "identity-obj-proxy": "3.0.0",
+    "jest": "29.7.0",
+    "jest-environment-jsdom": "30.0.0-beta.3",
     "nodemon": "3.1.10",
     "postcss": "8.5.3",
     "rimraf": "6.0.1",
