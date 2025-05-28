@@ -6,3 +6,8 @@ npm-debug.log
 *.backup
 *.old
 *.fixed
+
+# Environment variables
+.env
+.env.local
+.env.*.local
