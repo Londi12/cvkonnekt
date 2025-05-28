@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../utils/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export function SignUpForm() {
   const [email, setEmail] = useState('');
@@ -8,6 +9,7 @@ export function SignUpForm() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { signUp } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,8 +35,8 @@ export function SignUpForm() {
       if (!success) {
         setError(signUpError || 'Failed to sign up');
       } else {
-        // Redirect to home page or dashboard
-        window.location.hash = 'home';
+        // Navigate to home page
+        navigate('home');
       }
     } catch (err) {
       setError('An unexpected error occurred');
@@ -42,6 +44,11 @@ export function SignUpForm() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSignIn = (e) => {
+    e.preventDefault();
+    navigate('signin');
   };
 
   return (
@@ -53,9 +60,12 @@ export function SignUpForm() {
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Or{' '}
-            <a href="#signin" className="font-medium text-blue-600 hover:text-blue-500">
+            <button
+              onClick={handleSignIn}
+              className="font-medium text-blue-600 hover:text-blue-500"
+            >
               sign in to your existing account
-            </a>
+            </button>
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>

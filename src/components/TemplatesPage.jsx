@@ -68,10 +68,17 @@ export function TemplatesPage() {
   ];
 
   const handleTemplateSelect = (templateId) => {
-    // Store the selected template in localStorage
-    localStorage.setItem('selectedTemplate', templateId);
-    // Navigate to the builder page
-    window.location.hash = `builder?template=${templateId}`;
+    try {
+      // Store the selected template in localStorage
+      localStorage.setItem('selectedTemplate', templateId);
+      
+      // Navigate to the builder page
+      navigate('builder', { state: { templateId } });
+    } catch (error) {
+      console.error('Error selecting template:', error);
+      // Fallback to hash-based navigation if navigate fails
+      window.location.hash = `builder?template=${templateId}`;
+    }
   };
 
   const renderTemplatePreview = (template) => {
@@ -304,7 +311,7 @@ export function TemplatesPage() {
           </p>
           <div className="flex justify-center">
             <button 
-              onClick={() => window.location.hash = 'contact'}
+              onClick={() => navigate('contact')}
               className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
             >
               Request a Template
