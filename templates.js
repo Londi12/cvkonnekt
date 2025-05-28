@@ -167,3 +167,48 @@ const templates = {
 
 // Make templates available globally
 window.templates = templates;
+
+// Create React components for each template
+window.ResumeTemplates = {};
+Object.entries(templates).forEach(([category, templateList]) => {
+  templateList.forEach(template => {
+    window.ResumeTemplates[template.name] = (props) => {
+      const { data } = props;
+      return React.createElement('div', {
+        className: template.className
+      }, [
+        // Header section
+        React.createElement('div', { 
+          key: 'header',
+          className: template.headerClass 
+        }, data.personalInfo.fullName),
+        
+        // Contact section
+        React.createElement('div', {
+          key: 'contact',
+          className: 'text-sm'
+        }, [
+          data.personalInfo.email,
+          ' • ',
+          data.personalInfo.phone
+        ]),
+        
+        // Summary section
+        React.createElement('div', {
+          key: 'summary',
+          className: template.sectionClass
+        }, data.professionalSummary)
+      ]);
+    };
+  });
+});
+
+// Create ResumeTemplates format for the builder
+window.ResumeTemplates = {};
+Object.entries(templates).forEach(([category, templates]) => {
+  templates.forEach(template => {
+    window.ResumeTemplates[template.name] = (props) => React.createElement('div', {
+      className: template.className
+    }, 'Template Content Here');
+  });
+});
