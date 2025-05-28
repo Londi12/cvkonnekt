@@ -8,7 +8,7 @@
     "server": "nodemon improved-server.js",
     "client": "vite",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "build": "node scripts/check-supabase-config.js && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
@@ -23,7 +23,7 @@
     "check-supabase": "node scripts/check-supabase-config.js"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=18.0.0"
   },
   "keywords": [
     "resume",
