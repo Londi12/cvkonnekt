@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ProfileIcon } from './ProfileIcon';
 
 export function Navbar({ page, navigate }) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
     <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -82,13 +84,14 @@ export function Navbar({ page, navigate }) {
           <div className="-mr-2 flex items-center sm:hidden">
             <button
               type="button"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
               aria-controls="mobile-menu"
-              aria-expanded="false"
+              aria-expanded={isMobileMenuOpen}
             >
               <span className="sr-only">Open main menu</span>
               <svg
-                className="block h-6 w-6"
+                className={`${isMobileMenuOpen ? 'hidden' : 'block'} h-6 w-6`}
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -102,17 +105,35 @@ export function Navbar({ page, navigate }) {
                   d="M4 6h16M4 12h16M4 18h16"
                 />
               </svg>
+              <svg
+                className={`${isMobileMenuOpen ? 'block' : 'hidden'} h-6 w-6`}
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
             </button>
           </div>
         </div>
       </div>
 
       {/* Mobile menu */}
-      <div className="sm:hidden" id="mobile-menu">
+      <div className={`${isMobileMenuOpen ? 'block' : 'hidden'} sm:hidden`} id="mobile-menu">
         <div className="pt-2 pb-3 space-y-1">
           <a
             href="#home"
-            onClick={() => navigate('home')}
+            onClick={() => {
+              navigate('home');
+              setIsMobileMenuOpen(false);
+            }}
             className={`${
               page === 'home'
                 ? 'bg-blue-50 border-blue-500 text-blue-700'
@@ -123,7 +144,10 @@ export function Navbar({ page, navigate }) {
           </a>
           <a
             href="#templates"
-            onClick={() => navigate('templates')}
+            onClick={() => {
+              navigate('templates');
+              setIsMobileMenuOpen(false);
+            }}
             className={`${
               page === 'templates'
                 ? 'bg-blue-50 border-blue-500 text-blue-700'
@@ -134,7 +158,10 @@ export function Navbar({ page, navigate }) {
           </a>
           <a
             href="#about"
-            onClick={() => navigate('about')}
+            onClick={() => {
+              navigate('about');
+              setIsMobileMenuOpen(false);
+            }}
             className={`${
               page === 'about'
                 ? 'bg-blue-50 border-blue-500 text-blue-700'
@@ -145,7 +172,10 @@ export function Navbar({ page, navigate }) {
           </a>
           <a
             href="#contact"
-            onClick={() => navigate('contact')}
+            onClick={() => {
+              navigate('contact');
+              setIsMobileMenuOpen(false);
+            }}
             className={`${
               page === 'contact'
                 ? 'bg-blue-50 border-blue-500 text-blue-700'
@@ -154,27 +184,34 @@ export function Navbar({ page, navigate }) {
           >
             Contact
           </a>
-          <a
-            href="#support"
-            onClick={() => navigate('support')}
-            className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-white bg-green-600 hover:bg-green-700"
-          >
-            <div className="flex items-center">
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-              Support Us
+          <div className="pt-4 pb-3 border-t border-gray-200">
+            <div className="flex items-center px-4">
+              <div className="flex-shrink-0">
+                <ProfileIcon />
+              </div>
             </div>
-          </a>
-          <a
-            href="#templates"
-            onClick={() => navigate('templates')}
-            className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-white bg-blue-600 hover:bg-blue-700"
-          >
-            Create CV
-          </a>
-          <div className="pl-3 pr-4 py-2">
-            <ProfileIcon />
+            <div className="mt-3 space-y-1">
+              <a
+                href="#support"
+                onClick={() => {
+                  navigate('support');
+                  setIsMobileMenuOpen(false);
+                }}
+                className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+              >
+                Support Us
+              </a>
+              <a
+                href="#templates"
+                onClick={() => {
+                  navigate('templates');
+                  setIsMobileMenuOpen(false);
+                }}
+                className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+              >
+                Create CV
+              </a>
+            </div>
           </div>
         </div>
       </div>

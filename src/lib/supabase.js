@@ -62,4 +62,28 @@ export const deleteResume = async (id) => {
     .delete()
     .eq('id', id)
   return { data, error }
+}
+
+// Storage helper functions
+export const uploadResumeFile = async (file, userId) => {
+  const fileExt = file.name.split('.').pop()
+  const fileName = `${userId}/${Date.now()}.${fileExt}`
+  const { data, error } = await supabase.storage
+    .from('resumes')
+    .upload(fileName, file)
+  return { data, error }
+}
+
+export const getResumeFileUrl = async (path) => {
+  const { data } = await supabase.storage
+    .from('resumes')
+    .getPublicUrl(path)
+  return data.publicUrl
+}
+
+export const deleteResumeFile = async (path) => {
+  const { error } = await supabase.storage
+    .from('resumes')
+    .remove([path])
+  return { error }
 } 

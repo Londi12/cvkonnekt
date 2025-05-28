@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase, signUp, signIn, signOut as supabaseSignOut } from '../lib/supabase';
 
 const AuthContext = createContext(null);
 
@@ -10,11 +11,9 @@ export const AuthProvider = ({ children }) => {
     // Check for existing session
     const checkAuth = async () => {
       try {
-        const token = localStorage.getItem('authToken');
-        if (token) {
-          // TODO: Validate token with backend
-          const userData = JSON.parse(localStorage.getItem('userData'));
-          setUser(userData);
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (session) {
+          setUser(session.user);
         }
       } catch (error) {
         console.error('Auth check failed:', error);
@@ -24,39 +23,58 @@ export const AuthProvider = ({ children }) => {
     };
 
     checkAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
-  const signIn = async (credentials) => {
+  const signUpUser = async (email, password) => {
     try {
-      // TODO: Implement actual sign in logic with backend
-      const mockUser = {
-        id: '1',
-        email: credentials.email,
-        name: 'Test User',
-        avatar: null
-      };
-      
-      localStorage.setItem('authToken', 'mock-token');
-      localStorage.setItem('userData', JSON.stringify(mockUser));
-      setUser(mockUser);
-      return true;
+      const { data, error } = await signUp(email, password);
+      if (error) throw error;
+      return { success: true, data };
     } catch (error) {
-      console.error('Sign in failed:', error);
-      return false;
+      console.error('Sign up failed:', error);
+      return { success: false, error: error.message };
     }
   };
 
-  const signOut = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userData');
-    setUser(null);
+  const signInUser = async (email, password) => {
+    try {
+      const { data, error } = await signIn(email, password);
+      if (error) throw error;
+      setUser(data.user);
+      return { success: true, data };
+    } catch (error) {
+      console.error('Sign in failed:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  const signOutUser = async () => {
+    try {
+      const { error } = await supabaseSignOut();
+      if (error) throw error;
+      setUser(null);
+      return { success: true };
+    } catch (error) {
+      console.error('Sign out failed:', error);
+      return { success: false, error: error.message };
+    }
   };
 
   const value = {
     user,
     loading,
-    signIn,
-    signOut,
+    signUp: signUpUser,
+    signIn: signInUser,
+    signOut: signOutUser,
     isAuthenticated: !!user
   };
 

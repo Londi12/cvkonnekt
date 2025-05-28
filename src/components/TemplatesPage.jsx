@@ -1,6 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export function TemplatesPage() {
+  const navigate = useNavigate();
+
   const templates = [
     {
       id: 'classic',
@@ -63,6 +66,13 @@ export function TemplatesPage() {
       }
     }
   ];
+
+  const handleTemplateSelect = (templateId) => {
+    // Store the selected template in localStorage
+    localStorage.setItem('selectedTemplate', templateId);
+    // Navigate to the builder page
+    window.location.hash = `builder?template=${templateId}`;
+  };
 
   const renderTemplatePreview = (template) => {
     const getPreviewContent = (style) => {
@@ -276,12 +286,12 @@ export function TemplatesPage() {
                   ))}
                 </ul>
                 
-                <a 
-                  href={`#builder?template=${template.id}`} 
+                <button 
+                  onClick={() => handleTemplateSelect(template.id)}
                   className="block w-full bg-blue-600 text-white text-center py-2 rounded-md hover:bg-blue-700 transition-colors"
                 >
                   Use Template
-                </a>
+                </button>
               </div>
             </div>
           ))}
@@ -293,12 +303,12 @@ export function TemplatesPage() {
             We're constantly adding new templates. Let us know what you're looking for, and we'll consider adding it in our next update.
           </p>
           <div className="flex justify-center">
-            <a 
-              href="#contact" 
+            <button 
+              onClick={() => window.location.hash = 'contact'}
               className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
             >
               Request a Template
-            </a>
+            </button>
           </div>
         </div>
       </div>

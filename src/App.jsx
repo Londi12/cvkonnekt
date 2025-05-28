@@ -12,6 +12,7 @@ import { DonationModal } from './components/DonationModal';
 import { AuthProvider } from './utils/AuthContext';
 import html2pdf from 'html2pdf.js';
 import { ResumeForm } from './components/ResumeForm';
+import { SignUpForm } from './components/SignUpForm';
 
 // Form validation functions
 const validatePersonalInfo = (info) => {
@@ -309,6 +310,8 @@ function App() {
         return <TemplatesPage />;
       case 'support':
         return <SupportPage />;
+      case 'signup':
+        return <SignUpForm />;
       default:
         return <HomePage />;
     }
