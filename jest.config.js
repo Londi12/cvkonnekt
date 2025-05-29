@@ -1,7 +1,7 @@
 module.exports = {
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.(js|jsx)$': 'babel-jest',
+    '^.+\\.(js|jsx)$': ['babel-jest', { configFile: './babel.config.js' }]
   },
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
@@ -10,9 +10,12 @@ module.exports = {
     '^@utils/(.*)$': '<rootDir>/utils/$1'
   },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  testMatch: ['**/__tests__/**/*.test.[jt]s?(x)'],
   transformIgnorePatterns: [
     '/node_modules/(?!(@supabase|@babel)/)'
   ],
-  moduleFileExtensions: ['js', 'jsx', 'json', 'node']
+  testMatch: ['**/__tests__/**/*.test.js'],
+  moduleFileExtensions: ['js', 'jsx', 'json'],
+  testEnvironmentOptions: {
+    url: 'http://localhost'
+  }
 }; 
