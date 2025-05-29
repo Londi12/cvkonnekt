@@ -1,17 +1,11 @@
 module.exports = {
   presets: [
-    ['@babel/preset-env', { 
-      targets: { node: 'current' },
-      modules: 'auto'
-    }],
-    ['@babel/preset-react', { runtime: 'automatic' }]
+    ['@babel/preset-env', { targets: { node: 'current' } }],
+    '@babel/preset-react'
   ],
   plugins: [
-    ['@babel/plugin-transform-runtime', { 
-      regenerator: true,
-      useESModules: true
-    }],
-    ['@babel/plugin-syntax-import-meta']
+    '@babel/plugin-transform-modules-commonjs',
+    '@babel/plugin-syntax-import-meta'
   ],
   env: {
     test: {

@@ -7,11 +7,12 @@ const getEnvVar = (key) => {
     return process.env[key];
   }
   // Try import.meta.env (for Vite)
-  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key]) {
+  try {
+    // @ts-ignore
     return import.meta.env[key];
+  } catch (e) {
+    return '';
   }
-  // Return empty string as fallback
-  return '';
 };
 
 const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');

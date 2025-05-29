@@ -4,7 +4,10 @@ import '@testing-library/jest-dom';
 process.env.VITE_SUPABASE_URL = 'https://test.supabase.co';
 process.env.VITE_SUPABASE_ANON_KEY = 'test-anon-key';
 
-// Mock import.meta for all test files
+// Mock fetch if needed
+global.fetch = jest.fn();
+
+// Mock import.meta
 global.import = {
   meta: {
     env: {
