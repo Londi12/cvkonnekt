@@ -5,11 +5,19 @@ module.exports = {
   ],
   plugins: [
     '@babel/plugin-transform-modules-commonjs',
-    '@babel/plugin-syntax-import-meta'
+    '@babel/plugin-syntax-import-meta',
+    ['babel-plugin-transform-import-meta', {
+      moduleRoot: process.cwd()
+    }]
   ],
   env: {
     test: {
-      plugins: ['@babel/plugin-transform-modules-commonjs']
+      plugins: [
+        '@babel/plugin-transform-modules-commonjs',
+        ['babel-plugin-transform-import-meta', {
+          moduleRoot: process.cwd()
+        }]
+      ]
     }
   }
 }; 
