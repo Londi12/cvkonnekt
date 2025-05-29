@@ -1,6 +1,14 @@
-// Set environment variables directly
+// Set environment variables before any imports
 process.env.VITE_SUPABASE_URL = 'https://test.supabase.co';
 process.env.VITE_SUPABASE_ANON_KEY = 'test-anon-key';
+
+// Mock window.__ENV__ for browser environment
+global.window = {
+  __ENV__: {
+    VITE_SUPABASE_URL: 'https://test.supabase.co',
+    VITE_SUPABASE_ANON_KEY: 'test-anon-key'
+  }
+};
 
 // Import after setting environment variables
 import { supabase, signUp, signIn, signOut, getCurrentUser, saveResume, getResumes, updateResume, deleteResume } from '../supabase';
