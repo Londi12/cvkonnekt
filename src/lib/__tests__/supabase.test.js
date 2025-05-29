@@ -13,6 +13,12 @@ jest.mock('@supabase/supabase-js', () => {
   const eq = jest.fn();
   const select = jest.fn(() => ({ eq }));
   const from = jest.fn(() => ({ insert, select, eq }));
+  const update = jest.fn(() => ({ eq }));
+  const delete = jest.fn(() => ({ eq }));
+  const upload = jest.fn();
+  const getPublicUrl = jest.fn();
+  const remove = jest.fn();
+  
   return {
     createClient: jest.fn(() => ({
       auth: {
@@ -21,7 +27,14 @@ jest.mock('@supabase/supabase-js', () => {
         signOut: jest.fn(),
         getUser: jest.fn()
       },
-      from
+      from,
+      storage: {
+        from: jest.fn(() => ({
+          upload,
+          getPublicUrl,
+          remove
+        }))
+      }
     }))
   };
 });
@@ -68,6 +81,26 @@ describe('Supabase Integration', () => {
     supabase.from().select().eq.mockResolvedValue({ data: mockData, error: mockError });
 
     const result = await getResumes('user123');
+    expect(result.data).toEqual(mockData);
+    expect(result.error).toBeNull();
+  });
+
+  test('updateResume should call supabase.from().update().eq()', async () => {
+    const mockData = { id: '123', title: 'Updated Resume' };
+    const mockError = null;
+    supabase.from().update().eq.mockResolvedValue({ data: mockData, error: mockError });
+
+    const result = await updateResume('123', { title: 'Updated Resume' });
+    expect(result.data).toEqual(mockData);
+    expect(result.error).toBeNull();
+  });
+
+  test('deleteResume should call supabase.from().delete().eq()', async () => {
+    const mockData = { id: '123' };
+    const mockError = null;
+    supabase.from().delete().eq.mockResolvedValue({ data: mockData, error: mockError });
+
+    const result = await deleteResume('123');
     expect(result.data).toEqual(mockData);
     expect(result.error).toBeNull();
   });
