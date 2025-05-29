@@ -1,25 +1,9 @@
-// Mock environment variables before importing
+// Set environment variables directly
 process.env.VITE_SUPABASE_URL = 'https://test.supabase.co';
 process.env.VITE_SUPABASE_ANON_KEY = 'test-anon-key';
 
-// Mock import.meta.env
-global.import = {
-  meta: {
-    env: {
-      VITE_SUPABASE_URL: 'https://test.supabase.co',
-      VITE_SUPABASE_ANON_KEY: 'test-anon-key'
-    }
-  }
-};
-
+// Import after setting environment variables
 import { supabase, signUp, signIn, signOut, getCurrentUser, saveResume, getResumes, updateResume, deleteResume } from '../supabase';
-
-// Helper to create a chainable mock
-const chainable = (returnValue) => {
-  const mock = jest.fn(() => returnValue);
-  mock.eq = jest.fn(() => returnValue);
-  return mock;
-};
 
 // Mock Supabase client
 jest.mock('@supabase/supabase-js', () => {
