@@ -69,6 +69,7 @@
   "homepage": "https://github.com/Londi12/cvkonnekt#readme",
   "devDependencies": {
     "@babel/core": "^7.24.0",
+    "@babel/plugin-syntax-import-meta": "^7.10.4",
     "@babel/plugin-transform-runtime": "^7.24.0",
     "@babel/preset-env": "7.27.2",
     "@babel/preset-react": "7.27.1",
