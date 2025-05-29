@@ -3,16 +3,21 @@ import { createClient } from '@supabase/supabase-js'
 // Get environment variables in a way that works with both Vite and Jest
 const getEnvVar = (key) => {
   // Try process.env first (for Jest)
-  if (process.env[key]) {
+  if (typeof process !== 'undefined' && process.env && process.env[key]) {
     return process.env[key];
   }
-  // Try import.meta.env (for Vite)
-  try {
-    // @ts-ignore
-    return import.meta.env[key];
-  } catch (e) {
-    return '';
+  
+  // Try window.__ENV__ (for browser)
+  if (typeof window !== 'undefined' && window.__ENV__ && window.__ENV__[key]) {
+    return window.__ENV__[key];
   }
+  
+  // Try import.meta.env (for Vite)
+  if (typeof import !== 'undefined' && import.meta && import.meta.env && import.meta.env[key]) {
+    return import.meta.env[key];
+  }
+  
+  return '';
 };
 
 const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
