@@ -16,14 +16,13 @@
     "test": "jest",
     "azure-start": "NODE_ENV=production node improved-server.js",
     "prestart": "npm run build",
-    "postinstall": "npm run build",
     "lint": "eslint .",
     "format": "prettier --write .",
     "generate-icons": "node scripts/generate-icons.js",
     "check-supabase": "node scripts/check-supabase-config.js"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "keywords": [
     "resume",
