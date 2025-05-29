@@ -1,13 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+// Get environment variables in a way that works with both Vite and Jest
+const supabaseUrl = process.env.VITE_SUPABASE_URL || (typeof import.meta !== 'undefined' ? import.meta.env.VITE_SUPABASE_URL : '');
+const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || (typeof import.meta !== 'undefined' ? import.meta.env.VITE_SUPABASE_ANON_KEY : '');
 
-if (!supabaseUrl || !supabaseKey) {
+if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables')
 }
 
-export const supabase = createClient(supabaseUrl, supabaseKey)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 // Auth helper functions
 export const signUp = async (email, password) => {
