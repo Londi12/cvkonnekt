@@ -14,7 +14,7 @@ jest.mock('@supabase/supabase-js', () => {
   const select = jest.fn(() => ({ eq }));
   const from = jest.fn(() => ({ insert, select, eq }));
   const update = jest.fn(() => ({ eq }));
-  const delete = jest.fn(() => ({ eq }));
+  const deleteFn = jest.fn(() => ({ eq }));
   const upload = jest.fn();
   const getPublicUrl = jest.fn();
   const remove = jest.fn();
