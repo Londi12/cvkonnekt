@@ -23,10 +23,9 @@ export default defineConfig({
       }
     },
     rollupOptions: {
-      external: ['react', 'react-dom', '@supabase/supabase-js', 'react-router-dom'],
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom'],
+          vendor: ['react', 'react-dom', 'react-router-dom'],
           supabase: ['@supabase/supabase-js']
         },
         chunkFileNames: 'assets/[name]-[hash].js',
@@ -68,6 +67,6 @@ export default defineConfig({
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', '@supabase/supabase-js']
+    include: ['react', 'react-dom', '@supabase/supabase-js', 'react-router-dom']
   }
 });
