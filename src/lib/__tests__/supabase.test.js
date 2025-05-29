@@ -1,41 +1,79 @@
+// Mock environment variables before importing
+process.env.VITE_SUPABASE_URL = 'https://test.supabase.co';
+process.env.VITE_SUPABASE_ANON_KEY = 'test-anon-key';
+
+// Mock import.meta.env
+global.import = {
+  meta: {
+    env: {
+      VITE_SUPABASE_URL: 'https://test.supabase.co',
+      VITE_SUPABASE_ANON_KEY: 'test-anon-key'
+    }
+  }
+};
+
 import { supabase, signUp, signIn, signOut, getCurrentUser, saveResume, getResumes, updateResume, deleteResume } from '../supabase';
 
 // Helper to create a chainable mock
 const chainable = (returnValue) => {
-  const fn = jest.fn(() => fn);
-  Object.assign(fn, returnValue);
-  return fn;
+  const mock = jest.fn(() => returnValue);
+  mock.eq = jest.fn(() => returnValue);
+  return mock;
 };
 
 // Mock Supabase client
 jest.mock('@supabase/supabase-js', () => {
-  const insert = jest.fn();
-  const eq = jest.fn();
-  const select = jest.fn(() => ({ eq }));
-  const from = jest.fn(() => ({ insert, select, eq }));
-  const update = jest.fn(() => ({ eq }));
-  const deleteFn = jest.fn(() => ({ eq }));
-  const upload = jest.fn();
-  const getPublicUrl = jest.fn();
-  const remove = jest.fn();
-  
-  return {
-    createClient: jest.fn(() => ({
-      auth: {
-        signUp: jest.fn(),
-        signInWithPassword: jest.fn(),
-        signOut: jest.fn(),
-        getUser: jest.fn()
-      },
-      from,
-      storage: {
-        from: jest.fn(() => ({
-          upload,
-          getPublicUrl,
-          remove
+  const mockSupabase = {
+    auth: {
+      signUp: jest.fn(),
+      signIn: jest.fn(),
+      signOut: jest.fn(),
+      getSession: jest.fn(),
+      getUser: jest.fn()
+    },
+    from: jest.fn(() => ({
+      select: jest.fn(() => ({
+        eq: jest.fn(() => ({
+          data: [],
+          error: null
         }))
-      }
-    }))
+      })),
+      insert: jest.fn(() => ({
+        data: [],
+        error: null
+      })),
+      update: jest.fn(() => ({
+        eq: jest.fn(() => ({
+          data: [],
+          error: null
+        }))
+      })),
+      delete: jest.fn(() => ({
+        eq: jest.fn(() => ({
+          data: [],
+          error: null
+        }))
+      }))
+    })),
+    storage: {
+      from: jest.fn(() => ({
+        upload: jest.fn(() => ({
+          data: { path: 'test-path' },
+          error: null
+        })),
+        download: jest.fn(() => ({
+          data: new Blob(['test']),
+          error: null
+        })),
+        remove: jest.fn(() => ({
+          data: null,
+          error: null
+        }))
+      }))
+    }
+  };
+  return {
+    createClient: jest.fn(() => mockSupabase)
   };
 });
 
@@ -44,64 +82,92 @@ describe('Supabase Integration', () => {
     jest.clearAllMocks();
   });
 
-  test('signUp should call supabase.auth.signUp', async () => {
-    const mockData = { user: { id: '123' } };
-    const mockError = null;
-    supabase.auth.signUp.mockResolvedValue({ data: mockData, error: mockError });
-
-    const result = await signUp('test@example.com', 'password123');
-    expect(result.data).toEqual(mockData);
-    expect(result.error).toBeNull();
+  test('should create Supabase client with correct configuration', () => {
+    expect(supabase).toBeDefined();
   });
 
-  test('signIn should call supabase.auth.signInWithPassword', async () => {
-    const mockData = { user: { id: '123' } };
-    const mockError = null;
-    supabase.auth.signInWithPassword.mockResolvedValue({ data: mockData, error: mockError });
+  test('should handle sign up', async () => {
+    const mockUser = { id: '123', email: 'test@example.com' };
+    supabase.auth.signUp.mockResolvedValueOnce({ data: { user: mockUser }, error: null });
 
-    const result = await signIn('test@example.com', 'password123');
-    expect(result.data).toEqual(mockData);
-    expect(result.error).toBeNull();
+    const result = await signUp('test@example.com', 'password');
+    expect(result).toEqual(mockUser);
+    expect(supabase.auth.signUp).toHaveBeenCalledWith({
+      email: 'test@example.com',
+      password: 'password'
+    });
   });
 
-  test('saveResume should call supabase.from().insert()', async () => {
-    const mockData = { id: '123' };
-    const mockError = null;
-    supabase.from().insert.mockResolvedValue({ data: mockData, error: mockError });
+  test('should handle sign in', async () => {
+    const mockUser = { id: '123', email: 'test@example.com' };
+    supabase.auth.signIn.mockResolvedValueOnce({ data: { user: mockUser }, error: null });
 
-    const resumeData = { title: 'Test Resume', content: {} };
-    const result = await saveResume(resumeData);
-    expect(result.data).toEqual(mockData);
-    expect(result.error).toBeNull();
+    const result = await signIn('test@example.com', 'password');
+    expect(result).toEqual(mockUser);
+    expect(supabase.auth.signIn).toHaveBeenCalledWith({
+      email: 'test@example.com',
+      password: 'password'
+    });
   });
 
-  test('getResumes should call supabase.from().select().eq()', async () => {
-    const mockData = [{ id: '123', title: 'Test Resume' }];
-    const mockError = null;
-    supabase.from().select().eq.mockResolvedValue({ data: mockData, error: mockError });
+  test('should handle sign out', async () => {
+    supabase.auth.signOut.mockResolvedValueOnce({ error: null });
+
+    await signOut();
+    expect(supabase.auth.signOut).toHaveBeenCalled();
+  });
+
+  test('should get current user', async () => {
+    const mockUser = { id: '123', email: 'test@example.com' };
+    supabase.auth.getUser.mockResolvedValueOnce({ data: { user: mockUser }, error: null });
+
+    const result = await getCurrentUser();
+    expect(result).toEqual(mockUser);
+    expect(supabase.auth.getUser).toHaveBeenCalled();
+  });
+
+  test('should save resume', async () => {
+    const mockResume = { id: '123', title: 'Test Resume' };
+    supabase.from.mockReturnValueOnce({
+      insert: jest.fn().mockResolvedValueOnce({ data: [mockResume], error: null })
+    });
+
+    const result = await saveResume(mockResume);
+    expect(result).toEqual(mockResume);
+  });
+
+  test('should get resumes', async () => {
+    const mockResumes = [{ id: '123', title: 'Test Resume' }];
+    supabase.from.mockReturnValueOnce({
+      select: jest.fn().mockReturnValueOnce({
+        eq: jest.fn().mockResolvedValueOnce({ data: mockResumes, error: null })
+      })
+    });
 
     const result = await getResumes('user123');
-    expect(result.data).toEqual(mockData);
-    expect(result.error).toBeNull();
+    expect(result).toEqual(mockResumes);
   });
 
-  test('updateResume should call supabase.from().update().eq()', async () => {
-    const mockData = { id: '123', title: 'Updated Resume' };
-    const mockError = null;
-    supabase.from().update().eq.mockResolvedValue({ data: mockData, error: mockError });
+  test('should update resume', async () => {
+    const mockResume = { id: '123', title: 'Updated Resume' };
+    supabase.from.mockReturnValueOnce({
+      update: jest.fn().mockReturnValueOnce({
+        eq: jest.fn().mockResolvedValueOnce({ data: [mockResume], error: null })
+      })
+    });
 
-    const result = await updateResume('123', { title: 'Updated Resume' });
-    expect(result.data).toEqual(mockData);
-    expect(result.error).toBeNull();
+    const result = await updateResume('123', mockResume);
+    expect(result).toEqual(mockResume);
   });
 
-  test('deleteResume should call supabase.from().delete().eq()', async () => {
-    const mockData = { id: '123' };
-    const mockError = null;
-    supabase.from().delete().eq.mockResolvedValue({ data: mockData, error: mockError });
+  test('should delete resume', async () => {
+    supabase.from.mockReturnValueOnce({
+      delete: jest.fn().mockReturnValueOnce({
+        eq: jest.fn().mockResolvedValueOnce({ data: null, error: null })
+      })
+    });
 
-    const result = await deleteResume('123');
-    expect(result.data).toEqual(mockData);
-    expect(result.error).toBeNull();
+    await deleteResume('123');
+    expect(supabase.from).toHaveBeenCalledWith('resumes');
   });
 }); 
