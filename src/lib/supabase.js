@@ -20,18 +20,22 @@ const getEnvVar = (key) => {
   return '';
 };
 
-const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
-const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY');
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables')
+let supabase;
+export function getSupabase() {
+  if (!supabase) {
+    const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
+    const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY');
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Missing Supabase environment variables');
+    }
+    supabase = createClient(supabaseUrl, supabaseAnonKey);
+  }
+  return supabase;
 }
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 // Auth helper functions
 export const signUp = async (email, password) => {
-  const { data, error } = await supabase.auth.signUp({
+  const { data, error } = await getSupabase().auth.signUp({
     email,
     password,
   })
@@ -39,7 +43,7 @@ export const signUp = async (email, password) => {
 }
 
 export const signIn = async (email, password) => {
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await getSupabase().auth.signInWithPassword({
     email,
     password,
   })
@@ -47,25 +51,25 @@ export const signIn = async (email, password) => {
 }
 
 export const signOut = async () => {
-  const { error } = await supabase.auth.signOut()
+  const { error } = await getSupabase().auth.signOut()
   return { error }
 }
 
 export const getCurrentUser = async () => {
-  const { data: { user }, error } = await supabase.auth.getUser()
+  const { data: { user }, error } = await getSupabase().auth.getUser()
   return { user, error }
 }
 
 // Resume data helper functions
 export const saveResume = async (resumeData) => {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('resumes')
     .insert([resumeData])
   return { data, error }
 }
 
 export const getResumes = async (userId) => {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('resumes')
     .select('*')
     .eq('user_id', userId)
@@ -73,7 +77,7 @@ export const getResumes = async (userId) => {
 }
 
 export const updateResume = async (id, resumeData) => {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('resumes')
     .update(resumeData)
     .eq('id', id)
@@ -81,7 +85,7 @@ export const updateResume = async (id, resumeData) => {
 }
 
 export const deleteResume = async (id) => {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('resumes')
     .delete()
     .eq('id', id)
@@ -92,21 +96,21 @@ export const deleteResume = async (id) => {
 export const uploadResumeFile = async (file, userId) => {
   const fileExt = file.name.split('.').pop()
   const fileName = `${userId}/${Date.now()}.${fileExt}`
-  const { data, error } = await supabase.storage
+  const { data, error } = await getSupabase().storage
     .from('resumes')
     .upload(fileName, file)
   return { data, error }
 }
 
 export const getResumeFileUrl = async (path) => {
-  const { data } = await supabase.storage
+  const { data } = await getSupabase().storage
     .from('resumes')
     .getPublicUrl(path)
   return data.publicUrl
 }
 
 export const deleteResumeFile = async (path) => {
-  const { error } = await supabase.storage
+  const { error } = await getSupabase().storage
     .from('resumes')
     .remove([path])
   return { error }
