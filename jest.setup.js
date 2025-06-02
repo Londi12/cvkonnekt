@@ -50,4 +50,17 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
-})); 
+}));
+
+// Suppress console errors during tests
+const originalError = console.error;
+console.error = (...args) => {
+  if (
+    typeof args[0] === 'string' &&
+    (args[0].includes('Warning: ReactDOM.render is no longer supported') ||
+      args[0].includes('Warning: React.createFactory()'))
+  ) {
+    return;
+  }
+  originalError.call(console, ...args);
+}; 

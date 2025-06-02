@@ -2,22 +2,21 @@ import { createClient } from '@supabase/supabase-js'
 
 // Get environment variables in a way that works with both Vite and Jest
 const getEnvVar = (key) => {
-  // Try process.env first (for Jest)
   if (typeof process !== 'undefined' && process.env && process.env[key]) {
     return process.env[key];
   }
-  
-  // Try window.__ENV__ (for browser)
   if (typeof window !== 'undefined' && window.__ENV__ && window.__ENV__[key]) {
     return window.__ENV__[key];
   }
-  
-  // Try import.meta.env (for Vite)
-  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key]) {
-    return import.meta.env[key];
+  // Only try import.meta in environments that support it, using Function constructor
+  try {
+    // eslint-disable-next-line no-new-func
+    const value = Function('key', 'return typeof import !== "undefined" && import.meta && import.meta.env && import.meta.env[key] ? import.meta.env[key] : undefined;')(key);
+    if (value !== undefined) return value;
+  } catch (e) {
+    // ignore
   }
-  
-  return '';
+  throw new Error(`Environment variable ${key} is not defined`);
 };
 
 // Validate Supabase configuration
@@ -191,7 +190,8 @@ export const signUp = async (email, password) => {
     email,
     password,
   });
-  return { data, error };
+  if (error) throw error;
+  return data.user;
 };
 
 export const signIn = async (email, password) => {
@@ -201,53 +201,69 @@ export const signIn = async (email, password) => {
     email,
     password,
   });
-  return { data, error };
+  if (error) throw error;
+  return data.user;
 };
 
 export const signOut = async () => {
   const supabase = getSupabase();
   if (!supabase) throw new Error('Supabase client not initialized');
   const { error } = await supabase.auth.signOut();
-  return { error };
+  if (error) throw error;
 };
 
 export const getCurrentUser = async () => {
   const supabase = getSupabase();
   if (!supabase) throw new Error('Supabase client not initialized');
   const { data: { user }, error } = await supabase.auth.getUser();
-  return { user, error };
+  if (error) throw error;
+  return user;
 };
 
 // Resume data helper functions
-export const saveResume = async (resumeData) => {
-  const { data, error } = await getSupabase()
+export const saveResume = async (resume) => {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error('Supabase client not initialized');
+  const { data, error } = await supabase
     .from('resumes')
-    .insert([resumeData]);
-  return { data, error };
+    .insert(resume)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
 };
 
-export const getResumes = async (userId) => {
-  const { data, error } = await getSupabase()
+export const getResumes = async () => {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error('Supabase client not initialized');
+  const { data, error } = await supabase
     .from('resumes')
-    .select('*')
-    .eq('user_id', userId);
-  return { data, error };
+    .select('*');
+  if (error) throw error;
+  return data;
 };
 
-export const updateResume = async (id, resumeData) => {
-  const { data, error } = await getSupabase()
+export const updateResume = async (id, resume) => {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error('Supabase client not initialized');
+  const { data, error } = await supabase
     .from('resumes')
-    .update(resumeData)
-    .eq('id', id);
-  return { data, error };
+    .update(resume)
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
 };
 
 export const deleteResume = async (id) => {
-  const { data, error } = await getSupabase()
+  const supabase = getSupabase();
+  if (!supabase) throw new Error('Supabase client not initialized');
+  const { error } = await supabase
     .from('resumes')
     .delete()
     .eq('id', id);
-  return { data, error };
+  if (error) throw error;
 };
 
 // Storage helper functions

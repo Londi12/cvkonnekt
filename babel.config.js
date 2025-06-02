@@ -1,23 +1,10 @@
-module.exports = {
+export default {
   presets: [
     ['@babel/preset-env', { targets: { node: 'current' } }],
-    '@babel/preset-react'
+    ['@babel/preset-react', { runtime: 'automatic' }],
   ],
   plugins: [
-    '@babel/plugin-transform-modules-commonjs',
-    '@babel/plugin-syntax-import-meta',
-    ['babel-plugin-transform-import-meta', {
-      moduleRoot: process.cwd()
-    }]
+    '@babel/plugin-transform-runtime',
+    ['@babel/plugin-transform-modules-commonjs', { allowTopLevelThis: true }],
   ],
-  env: {
-    test: {
-      plugins: [
-        '@babel/plugin-transform-modules-commonjs',
-        ['babel-plugin-transform-import-meta', {
-          moduleRoot: process.cwd()
-        }]
-      ]
-    }
-  }
 }; 
