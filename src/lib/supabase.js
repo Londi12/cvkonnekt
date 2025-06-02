@@ -1,116 +1,23 @@
-import { createClient } from '@supabase/supabase-js'
-
-// Get environment variables in a way that works with both Vite and Jest
-const getEnvVar = (key) => {
-  if (typeof process !== 'undefined' && process.env && process.env[key]) {
-    return process.env[key];
-  }
-  if (typeof window !== 'undefined' && window.__ENV__ && window.__ENV__[key]) {
-    return window.__ENV__[key];
-  }
-  // Only try import.meta in environments that support it, using Function constructor
-  try {
-    // eslint-disable-next-line no-new-func
-    const value = Function('key', 'return typeof import !== "undefined" && import.meta && import.meta.env && import.meta.env[key] ? import.meta.env[key] : undefined;')(key);
-    if (value !== undefined) return value;
-  } catch (e) {
-    // ignore
-  }
-  throw new Error(`Environment variable ${key} is not defined`);
-};
-
-// Validate Supabase configuration
-const validateSupabaseConfig = () => {
-  const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
-  const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY');
-  
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn('Missing Supabase environment variables. Please check your .env file.');
-    return false;
-  }
-  
-  if (!supabaseUrl.startsWith('https://')) {
-    console.warn('Invalid Supabase URL. Must start with https://');
-    return false;
-  }
-  
-  if (!supabaseAnonKey.startsWith('eyJ')) {
-    console.warn('Invalid Supabase anon key format');
-    return false;
-  }
-  
-  return true;
-};
-
-// Test Supabase connection
-const testSupabaseConnection = async () => {
-  try {
-    const { data, error } = await supabase.auth.getSession();
-    if (error) throw error;
-    return true;
-  } catch (error) {
-    console.error('Failed to test Supabase connection:', error);
-    return false;
+// Mock users database
+const mockUsers = {
+  'test@example.com': {
+    id: 'test-user-1',
+    email: 'test@example.com',
+    password: 'test123',
+    created_at: new Date().toISOString()
+  },
+  'admin@example.com': {
+    id: 'test-user-2',
+    email: 'admin@example.com',
+    password: 'admin123',
+    created_at: new Date().toISOString()
   }
 };
 
-let supabase = null;
+// Mock resume data storage
+const mockResumes = new Map();
 
-export function getSupabase() {
-  if (!supabase) {
-    if (!validateSupabaseConfig()) {
-      console.warn('Using mock Supabase client due to invalid configuration');
-      return getMockSupabaseClient();
-    }
-    
-    const supabaseUrl = getEnvVar('VITE_SUPABASE_URL');
-    const supabaseAnonKey = getEnvVar('VITE_SUPABASE_ANON_KEY');
-    
-    try {
-      supabase = createClient(supabaseUrl, supabaseAnonKey, {
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: true,
-          storage: window.localStorage
-        },
-        realtime: {
-          params: {
-            eventsPerSecond: 10
-          }
-        }
-      });
-      
-      // Test the connection
-      testSupabaseConnection().catch(error => {
-        console.error('Failed to connect to Supabase:', error);
-      });
-    } catch (error) {
-      console.error('Error creating Supabase client:', error);
-      return getMockSupabaseClient();
-    }
-  }
-  return supabase;
-}
-
-// Mock Supabase client for development/testing
-function getMockSupabaseClient() {
-  // Mock users database
-  const mockUsers = {
-    'test@example.com': {
-      id: 'test-user-1',
-      email: 'test@example.com',
-      password: 'test123',
-      created_at: new Date().toISOString()
-    },
-    'admin@example.com': {
-      id: 'test-user-2',
-      email: 'admin@example.com',
-      password: 'admin123',
-      created_at: new Date().toISOString()
-    }
-  };
-
+export function getMockSupabaseClient() {
   return {
     auth: {
       getUser: async () => {
@@ -166,99 +73,111 @@ function getMockSupabaseClient() {
         };
       }
     },
-    from: () => ({
-      select: () => ({ eq: () => ({ data: [], error: null }) }),
-      insert: () => ({ data: [], error: null }),
-      update: () => ({ eq: () => ({ data: [], error: null }) }),
-      delete: () => ({ eq: () => ({ data: null, error: null }) })
+    from: (table) => ({
+      select: () => ({
+        eq: (field, value) => {
+          if (table === 'resumes') {
+            const resumes = Array.from(mockResumes.values())
+              .filter(resume => resume[field] === value);
+            return { data: resumes, error: null };
+          }
+          return { data: [], error: null };
+        }
+      }),
+      insert: (data) => {
+        if (table === 'resumes') {
+          const id = `resume-${Date.now()}`;
+          const resume = { ...data, id };
+          mockResumes.set(id, resume);
+          return { data: [resume], error: null };
+        }
+        return { data: [], error: null };
+      },
+      update: (data) => ({
+        eq: (field, value) => {
+          if (table === 'resumes') {
+            const resume = mockResumes.get(value);
+            if (resume) {
+              const updatedResume = { ...resume, ...data };
+              mockResumes.set(value, updatedResume);
+              return { data: [updatedResume], error: null };
+            }
+          }
+          return { data: [], error: null };
+        }
+      }),
+      delete: () => ({
+        eq: (field, value) => {
+          if (table === 'resumes') {
+            mockResumes.delete(value);
+          }
+          return { data: null, error: null };
+        }
+      })
     }),
     storage: {
       from: () => ({
-        upload: async () => ({ data: { path: '' }, error: null }),
-        getPublicUrl: () => ({ data: { publicUrl: '' } }),
-        remove: async () => ({ error: null })
+        upload: async (path, file) => {
+          // Mock file upload - store in localStorage
+          const reader = new FileReader();
+          return new Promise((resolve) => {
+            reader.onload = () => {
+              localStorage.setItem(`file_${path}`, reader.result);
+              resolve({ data: { path }, error: null });
+            };
+            reader.readAsDataURL(file);
+          });
+        },
+        getPublicUrl: (path) => {
+          // Return a mock URL for the file
+          const fileData = localStorage.getItem(`file_${path}`);
+          return { 
+            data: { 
+              publicUrl: fileData || `mock://storage/${path}` 
+            } 
+          };
+        },
+        remove: async (paths) => {
+          // Remove files from localStorage
+          paths.forEach(path => localStorage.removeItem(`file_${path}`));
+          return { error: null };
+        }
       })
     }
   };
 }
 
-// Auth helper functions
-export const signUp = async (email, password) => {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error('Supabase client not initialized');
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-  });
-  if (error) throw error;
-  return data.user;
-};
-
-export const signIn = async (email, password) => {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error('Supabase client not initialized');
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-  if (error) throw error;
-  return data.user;
-};
-
-export const signOut = async () => {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error('Supabase client not initialized');
-  const { error } = await supabase.auth.signOut();
-  if (error) throw error;
-};
-
-export const getCurrentUser = async () => {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error('Supabase client not initialized');
-  const { data: { user }, error } = await supabase.auth.getUser();
-  if (error) throw error;
-  return user;
-};
-
 // Resume data helper functions
 export const saveResume = async (resume) => {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error('Supabase client not initialized');
+  const supabase = getMockSupabaseClient();
   const { data, error } = await supabase
     .from('resumes')
-    .insert(resume)
-    .select()
-    .single();
+    .insert(resume);
   if (error) throw error;
-  return data;
+  return data[0];
 };
 
 export const getResumes = async () => {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error('Supabase client not initialized');
+  const supabase = getMockSupabaseClient();
   const { data, error } = await supabase
     .from('resumes')
-    .select('*');
+    .select();
   if (error) throw error;
   return data;
 };
 
 export const updateResume = async (id, resume) => {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error('Supabase client not initialized');
+  const supabase = getMockSupabaseClient();
   const { data, error } = await supabase
     .from('resumes')
     .update(resume)
-    .eq('id', id)
-    .select()
-    .single();
+    .eq('id', id);
   if (error) throw error;
-  return data;
+  return data[0];
 };
 
 export const deleteResume = async (id) => {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error('Supabase client not initialized');
+  const supabase = getMockSupabaseClient();
   const { error } = await supabase
     .from('resumes')
     .delete()
@@ -270,22 +189,25 @@ export const deleteResume = async (id) => {
 export const uploadResumeFile = async (file, userId) => {
   const fileExt = file.name.split('.').pop();
   const fileName = `${userId}/${Date.now()}.${fileExt}`;
-  const { data, error } = await getSupabase().storage
+  const supabase = getMockSupabaseClient();
+  const { data, error } = await supabase.storage
     .from('resumes')
     .upload(fileName, file);
   return { data, error };
 };
 
 export const getResumeFileUrl = async (path) => {
-  const { data } = await getSupabase().storage
+  const supabase = getMockSupabaseClient();
+  const { data } = await supabase.storage
     .from('resumes')
-    .getPublicUrl(path)
-  return data.publicUrl
-}
+    .getPublicUrl(path);
+  return data.publicUrl;
+};
 
 export const deleteResumeFile = async (path) => {
-  const { error } = await getSupabase().storage
+  const supabase = getMockSupabaseClient();
+  const { error } = await supabase.storage
     .from('resumes')
-    .remove([path])
-  return { error }
-} 
+    .remove([path]);
+  return { error };
+}; 
