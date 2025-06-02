@@ -297,21 +297,23 @@ function App() {
     { id: 'references', label: 'References' }
   ];
 
-  // Render different pages based on state
+  // Render the appropriate page component
   const renderPage = () => {
     switch (page) {
       case 'home':
         return <HomePage />;
+      case 'templates':
+        return <TemplatesPage navigate={navigate} />;
       case 'about':
         return <AboutPage />;
       case 'contact':
         return <ContactPage />;
-      case 'templates':
-        return <TemplatesPage />;
       case 'support':
         return <SupportPage />;
       case 'signup':
-        return <SignUpForm />;
+        return <SignUpForm navigate={navigate} />;
+      case 'builder':
+        return <ResumeForm />;
       default:
         return <HomePage />;
     }
@@ -418,15 +420,15 @@ function App() {
     <AuthProvider>
       <div className="min-h-screen bg-gray-50">
         <Navbar page={page} navigate={navigate} />
-        <main className="container mx-auto px-4 py-8">
+        <main className="pt-16">
           {renderPage()}
         </main>
         {showDonationModal && (
           <DonationModal
-            amount={donationAmount}
-            onAmountChange={setDonationAmount}
             onClose={() => setShowDonationModal(false)}
             onDonate={handleDonate}
+            amount={donationAmount}
+            onAmountChange={setDonationAmount}
           />
         )}
       </div>

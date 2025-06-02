@@ -19,7 +19,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "generate-icons": "node scripts/generate-icons.js",
-    "check-supabase": "node scripts/check-supabase-config.js"
+    "check-supabase": "node scripts/check-supabase-config.js",
+    "build:cpanel": "node scripts/build-for-cpanel.js"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -92,5 +93,9 @@
     "rimraf": "6.0.1",
     "terser": "5.40.0",
     "vite": "^5.0.10"
+  },
+  "resolutions": {
+    "glob": "^10.3.10",
+    "inflight": "^2.0.0"
   }
 }

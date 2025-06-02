@@ -27,19 +27,19 @@ export function Navbar({ page, navigate }) {
   };
 
   return (
-    <nav className="bg-white shadow-md">
+    <nav className="bg-white shadow-md fixed w-full top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <a href="#home" onClick={() => navigate('home')} className="text-2xl font-bold text-blue-600">
+              <a href="#home" onClick={() => handleNavigation('home')} className="text-2xl font-bold text-blue-600">
                 CVKonnekt
               </a>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               <a
                 href="#home"
-                onClick={() => navigate('home')}
+                onClick={() => handleNavigation('home')}
                 className={`${
                   page === 'home'
                     ? 'border-blue-500 text-gray-900'
@@ -50,7 +50,7 @@ export function Navbar({ page, navigate }) {
               </a>
               <a
                 href="#templates"
-                onClick={() => navigate('templates')}
+                onClick={() => handleNavigation('templates')}
                 className={`${
                   page === 'templates'
                     ? 'border-blue-500 text-gray-900'
@@ -61,7 +61,7 @@ export function Navbar({ page, navigate }) {
               </a>
               <a
                 href="#about"
-                onClick={() => navigate('about')}
+                onClick={() => handleNavigation('about')}
                 className={`${
                   page === 'about'
                     ? 'border-blue-500 text-gray-900'
@@ -72,7 +72,7 @@ export function Navbar({ page, navigate }) {
               </a>
               <a
                 href="#contact"
-                onClick={() => navigate('contact')}
+                onClick={() => handleNavigation('contact')}
                 className={`${
                   page === 'contact'
                     ? 'border-blue-500 text-gray-900'
@@ -86,7 +86,7 @@ export function Navbar({ page, navigate }) {
           <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
             <a
               href="#support"
-              onClick={() => navigate('support')}
+              onClick={() => handleNavigation('support')}
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors duration-200"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,7 +96,7 @@ export function Navbar({ page, navigate }) {
             </a>
             <a
               href="#templates"
-              onClick={() => navigate('templates')}
+              onClick={() => handleNavigation('templates')}
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
             >
               Create CV
