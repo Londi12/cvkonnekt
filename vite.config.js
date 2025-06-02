@@ -18,20 +18,6 @@ export default defineConfig({
         pure_funcs: ['console.log', 'console.info', 'console.debug'],
         passes: 2
       },
-    },
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          'vendor': ['react', 'react-dom'],
-          'supabase': ['@supabase/supabase-js']
-        },
-        chunkFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash][extname]'
-      }
-    },
-    cssCodeSplit: true,
-    assetsInlineLimit: 4096,
-    chunkSizeWarningLimit: 1000,
       format: {
         comments: false
       }
