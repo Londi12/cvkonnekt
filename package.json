@@ -53,7 +53,7 @@
     "pdfkit": "0.17.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.22.3",
+    "react-router-dom": "6.22.3",
     "react-swipeable": "^7.0.1",
     "sharp": "^0.33.2",
     "tailwindcss": "^3.4.1",
@@ -97,13 +97,11 @@
     "glob": "^10.3.10",
     "inflight": "^2.0.0",
     "@babel/traverse": "^7.24.0",
-    "postcss": "^8.4.35",
-    "react-router-dom": "^6.22.3"
+    "postcss": "^8.4.35"
   },
   "overrides": {
     "glob": "^10.3.10",
     "inflight": "^2.0.0",
-    "postcss": "^8.4.35",
-    "react-router-dom": "^6.22.3"
+    "postcss": "^8.4.35"
   }
 }
