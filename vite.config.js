@@ -23,19 +23,23 @@ export default defineConfig({
       }
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react-router-dom', '@supabase/supabase-js', '@headlessui/react'],
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          supabase: ['@supabase/supabase-js'],
-          ui: ['@headlessui/react']
-        },
-        globals: {
-          'react': 'React',
-          'react-dom': 'ReactDOM',
-          'react-router-dom': 'ReactRouterDOM',
-          '@supabase/supabase-js': 'Supabase',
-          '@headlessui/react': 'HeadlessUI'
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react-router-dom')) {
+              return 'vendor-router';
+            }
+            if (id.includes('@supabase')) {
+              return 'vendor-supabase';
+            }
+            if (id.includes('@headlessui')) {
+              return 'vendor-ui';
+            }
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'vendor-react';
+            }
+            return 'vendor';
+          }
         },
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
@@ -52,6 +56,23 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
     target: 'es2015',
     assetsInlineLimit: 4096
+  },
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      '@supabase/supabase-js',
+      '@headlessui/react'
+    ]
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      '@components': path.resolve(__dirname, './src/components'),
+      '@utils': path.resolve(__dirname, './utils')
+    },
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
   },
   server: {
     port: 8080,
@@ -71,16 +92,5 @@ export default defineConfig({
   preview: {
     port: 3000,
     strictPort: true
-  },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-      '@components': path.resolve(__dirname, './src/components'),
-      '@utils': path.resolve(__dirname, './utils')
-    },
-    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
-  },
-  optimizeDeps: {
-    include: ['react', 'react-dom', '@supabase/supabase-js', 'react-router-dom']
   }
 });
