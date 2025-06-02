@@ -4,12 +4,13 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? '/' : '/',
+  base: './',
   plugins: [react()],
   build: {
     outDir: 'dist',
     emptyOutDir: true,
     sourcemap: true,
+    assetsDir: 'assets',
     minify: 'terser',
     terserOptions: {
       compress: {
