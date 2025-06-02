@@ -23,6 +23,7 @@ export default defineConfig({
       }
     },
     rollupOptions: {
+      external: ['react-router-dom'],
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
