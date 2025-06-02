@@ -1,9 +1,16 @@
 {
   "version": 2,
-  "framework": "vite",
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "installCommand": "npm install",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node",
+      "config": {
+        "buildCommand": "npm run build",
+        "outputDirectory": "dist",
+        "installCommand": "npm install"
+      }
+    }
+  ],
   "routes": [
     {
       "src": "/(.*)",
@@ -11,15 +18,6 @@
     }
   ],
   "env": {
-    "VITE_SUPABASE_URL": "@vite_supabase_url",
-    "VITE_SUPABASE_ANON_KEY": "@vite_supabase_anon_key",
-    "STORAGE_URL": "https://dbhkdtavxurjiatnymij.supabase.co/storage/v1"
-  },
-  "git": {
-    "deploymentEnabled": {
-      "main": true,
-      "development": true,
-      "preview": true
-    }
+    "NODE_ENV": "production"
   }
 } 
