@@ -23,11 +23,19 @@ export default defineConfig({
       }
     },
     rollupOptions: {
+      external: ['react', 'react-dom', 'react-router-dom', '@supabase/supabase-js', '@headlessui/react'],
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
           supabase: ['@supabase/supabase-js'],
           ui: ['@headlessui/react']
+        },
+        globals: {
+          'react': 'React',
+          'react-dom': 'ReactDOM',
+          'react-router-dom': 'ReactRouterDOM',
+          '@supabase/supabase-js': 'Supabase',
+          '@headlessui/react': 'HeadlessUI'
         },
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
