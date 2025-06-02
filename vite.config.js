@@ -9,7 +9,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    sourcemap: process.env.NODE_ENV === 'development',
+    sourcemap: true,
     minify: 'terser',
     terserOptions: {
       compress: {
@@ -23,23 +23,12 @@ export default defineConfig({
       }
     },
     rollupOptions: {
+      external: ['react-router-dom'],
       output: {
-        manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            if (id.includes('react-router-dom')) {
-              return 'vendor-router';
-            }
-            if (id.includes('@supabase')) {
-              return 'vendor-supabase';
-            }
-            if (id.includes('@headlessui')) {
-              return 'vendor-ui';
-            }
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'vendor-react';
-            }
-            return 'vendor';
-          }
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'router': ['react-router-dom'],
+          'supabase': ['@supabase/supabase-js'],
         },
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
@@ -79,11 +68,9 @@ export default defineConfig({
     strictPort: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:3001',
+        target: 'http://localhost:8080',
         changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
+      },
     },
     hmr: {
       overlay: true
