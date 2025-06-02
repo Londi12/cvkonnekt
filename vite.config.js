@@ -23,7 +23,6 @@ export default defineConfig({
       }
     },
     rollupOptions: {
-      external: ['react-router-dom'],
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
@@ -59,7 +58,6 @@ export default defineConfig({
     include: [
       'react',
       'react-dom',
-      'react-router-dom',
       '@supabase/supabase-js',
       '@headlessui/react'
     ]
