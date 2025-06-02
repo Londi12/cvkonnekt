@@ -69,8 +69,11 @@ export function TemplatesPage({ navigate }) {
       // Store the selected template in localStorage
       localStorage.setItem('selectedTemplate', templateId);
       
-      // Navigate to the builder page
-      navigate('builder', { state: { templateId } });
+      // Navigate to the builder page with template parameter
+      navigate('builder', { 
+        fromTemplate: true,
+        templateId
+      });
     } catch (error) {
       console.error('Error selecting template:', error);
       // Fallback to hash-based navigation if navigate fails

@@ -2,7 +2,7 @@
   "name": "cvkonnekt",
   "version": "1.0.0",
   "description": "CV Builder for South Africans",
-  "main": "server.js",
+  "main": "improved-server.js",
   "scripts": {
     "start": "node improved-server.js",
     "server": "nodemon improved-server.js",

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../utils/AuthContext';
 
 export function SignUpForm({ navigate }) {
@@ -7,7 +7,28 @@ export function SignUpForm({ navigate }) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signUp } = useAuth();
+  const { signUp, user, isAuthenticated } = useAuth();
+
+  // Check if user is already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      const redirectTo = localStorage.getItem('redirectAfterAuth') || 'home';
+      const selectedTemplate = localStorage.getItem('selectedTemplate');
+      
+      // Clear stored data
+      localStorage.removeItem('redirectAfterAuth');
+      
+      // Navigate to the appropriate page
+      if (redirectTo === 'builder' && selectedTemplate) {
+        navigate('builder', { 
+          fromTemplate: true,
+          templateId: selectedTemplate
+        });
+      } else {
+        navigate(redirectTo);
+      }
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,12 +50,29 @@ export function SignUpForm({ navigate }) {
     }
 
     try {
-      const { success, error: signUpError } = await signUp(email, password);
-      if (!success) {
-        setError(signUpError || 'Failed to sign up');
-      } else {
-        // Navigate to home page
-        navigate('home');
+      const { data, error: signUpError } = await signUp(email, password);
+      if (signUpError) {
+        setError(signUpError.message || 'Failed to sign up');
+      } else if (data?.user) {
+        // Store user in localStorage for persistence
+        localStorage.setItem('user', JSON.stringify(data.user));
+        
+        // Get redirect destination and template
+        const redirectTo = localStorage.getItem('redirectAfterAuth') || 'home';
+        const selectedTemplate = localStorage.getItem('selectedTemplate');
+        
+        // Clear stored data
+        localStorage.removeItem('redirectAfterAuth');
+        
+        // Navigate to the appropriate page
+        if (redirectTo === 'builder' && selectedTemplate) {
+          navigate('builder', { 
+            fromTemplate: true,
+            templateId: selectedTemplate
+          });
+        } else {
+          navigate(redirectTo);
+        }
       }
     } catch (err) {
       setError('An unexpected error occurred');

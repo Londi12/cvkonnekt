@@ -4,6 +4,8 @@ import { AboutPage } from './components/AboutPage';
 import { ContactPage } from './components/ContactPage';
 import { TemplatesPage } from './components/TemplatesPage';
 import { SupportPage } from './components/SupportPage';
+import { DashboardPage } from './components/DashboardPage';
+import { ProfileSettingsPage } from './components/ProfileSettingsPage';
 import { ModernTemplate, ProfessionalTemplate, MinimalTemplate } from './components/ResumeTemplates';
 import { BuilderDonationBanner } from './components/BuilderDonationBanner';
 import { ResumeActions } from './components/ResumeActions';
@@ -101,6 +103,20 @@ const generatePDF = async () => {
   }
 };
 
+// Template component mapping
+const getTemplateComponent = (templateId) => {
+  switch (templateId) {
+    case 'modern':
+      return ModernTemplate;
+    case 'professional':
+      return ProfessionalTemplate;
+    case 'minimal':
+      return MinimalTemplate;
+    default:
+      return ModernTemplate; // Default to modern template
+  }
+};
+
 // Main App component that serves as the root component for the application
 function App() {
   const [page, setPage] = useState('home');
@@ -108,7 +124,10 @@ function App() {
   const [donationAmount, setDonationAmount] = useState(100);
   const [showDonationModal, setShowDonationModal] = useState(false);
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
-  const [activeTemplate, setActiveTemplate] = useState(null);
+  const [activeTemplate, setActiveTemplate] = useState(() => {
+    // Initialize from localStorage if available
+    return localStorage.getItem('selectedTemplate') || null;
+  });
   const [activeSection, setActiveSection] = useState('personal');
   const [formErrors, setFormErrors] = useState({});
   const [isSaving, setIsSaving] = useState(false);
@@ -167,11 +186,34 @@ function App() {
   const [newLanguage, setNewLanguage] = useState({ language: '', proficiency: 'Fluent' });
 
   // Handle navigation
-  const navigate = (targetPage) => {
-    // Redirect builder to templates
-    if (targetPage === 'builder') {
-      targetPage = 'templates';
+  const navigate = (targetPage, options = {}) => {
+    // Check if user is authenticated for protected routes
+    const isAuthenticated = localStorage.getItem('user') !== null;
+    const protectedRoutes = ['builder']; // Only protect builder route
+    
+    // If user is already authenticated, proceed with navigation
+    if (isAuthenticated) {
+      // Handle template selection
+      if (targetPage === 'builder' && options.fromTemplate) {
+        setActiveTemplate(options.templateId);
+        localStorage.setItem('selectedTemplate', options.templateId);
+      }
+      setPage(targetPage);
+      setShowMobileMenu(false);
+      window.location.hash = targetPage;
+      return;
     }
+    
+    // If not authenticated and trying to access protected route
+    if (protectedRoutes.includes(targetPage)) {
+      // Store the intended destination and template if present
+      localStorage.setItem('redirectAfterAuth', targetPage);
+      if (options.templateId) {
+        localStorage.setItem('selectedTemplate', options.templateId);
+      }
+      targetPage = 'signup';
+    }
+
     setPage(targetPage);
     setShowMobileMenu(false);
     window.location.hash = targetPage;
@@ -183,10 +225,29 @@ function App() {
       const hash = window.location.hash.replace('#', '') || 'home';
       const [page, params] = hash.split('?');
       
-      // Redirect builder to templates
-      if (page === 'builder') {
-        window.location.hash = 'templates';
+      // Check auth state for protected routes
+      const isAuthenticated = localStorage.getItem('user') !== null;
+      if (['builder'].includes(page) && !isAuthenticated) { // Only check builder route
+        localStorage.setItem('redirectAfterAuth', page);
+        if (params) {
+          const searchParams = new URLSearchParams(params);
+          const template = searchParams.get('template');
+          if (template) {
+            localStorage.setItem('selectedTemplate', template);
+          }
+        }
+        setPage('signup');
         return;
+      }
+      
+      // Handle template parameters if present
+      if (page === 'builder' && params) {
+        const searchParams = new URLSearchParams(params);
+        const template = searchParams.get('template');
+        if (template) {
+          setActiveTemplate(template);
+          localStorage.setItem('selectedTemplate', template);
+        }
       }
       
       setPage(page);
@@ -230,26 +291,6 @@ function App() {
 
   const closeFeedbackForm = () => {
     setShowFeedbackForm(false);
-  };
-
-  // Handle template selection
-  const selectTemplate = (template) => {
-    setActiveTemplate(template);
-    navigate('builder');
-  };
-
-  // Get the appropriate template component
-  const getTemplateComponent = (templateName) => {
-    switch (templateName) {
-      case 'Modern':
-        return ModernTemplate;
-      case 'Professional':
-        return ProfessionalTemplate;
-      case 'Minimal':
-        return MinimalTemplate;
-      default:
-        return ModernTemplate;
-    }
   };
 
   // Auto-save functionality
@@ -312,8 +353,17 @@ function App() {
         return <SupportPage />;
       case 'signup':
         return <SignUpForm navigate={navigate} />;
+      case 'dashboard':
+        return <DashboardPage />;
+      case 'profile':
+        return <ProfileSettingsPage />;
       case 'builder':
-        return <ResumeForm />;
+        // Only render builder if we have an active template
+        if (!activeTemplate) {
+          navigate('templates');
+          return null;
+        }
+        return renderBuilder();
       default:
         return <HomePage />;
     }

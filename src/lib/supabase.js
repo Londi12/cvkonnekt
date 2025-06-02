@@ -96,14 +96,76 @@ export function getSupabase() {
 
 // Mock Supabase client for development/testing
 function getMockSupabaseClient() {
+  // Mock users database
+  const mockUsers = {
+    'test@example.com': {
+      id: 'test-user-1',
+      email: 'test@example.com',
+      password: 'test123',
+      created_at: new Date().toISOString()
+    },
+    'admin@example.com': {
+      id: 'test-user-2',
+      email: 'admin@example.com',
+      password: 'admin123',
+      created_at: new Date().toISOString()
+    }
+  };
+
   return {
     auth: {
-      getUser: async () => ({ data: { user: null }, error: null }),
+      getUser: async () => {
+        const userStr = localStorage.getItem('user');
+        if (!userStr) return { data: { user: null }, error: null };
+        const user = JSON.parse(userStr);
+        return { data: { user }, error: null };
+      },
       onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
-      signUp: async () => ({ data: { user: null }, error: null }),
-      signIn: async () => ({ data: { user: null }, error: null }),
-      signOut: async () => ({ error: null }),
-      getSession: async () => ({ data: { session: null }, error: null })
+      signUp: async ({ email, password }) => {
+        if (mockUsers[email]) {
+          return { 
+            data: { user: null }, 
+            error: { message: 'User already exists' } 
+          };
+        }
+        const newUser = {
+          id: `user-${Date.now()}`,
+          email,
+          created_at: new Date().toISOString()
+        };
+        mockUsers[email] = { ...newUser, password };
+        return { data: { user: newUser }, error: null };
+      },
+      signInWithPassword: async ({ email, password }) => {
+        const user = mockUsers[email];
+        if (!user || user.password !== password) {
+          return { 
+            data: { user: null }, 
+            error: { message: 'Invalid login credentials' } 
+          };
+        }
+        const { password: _, ...userWithoutPassword } = user;
+        return { data: { user: userWithoutPassword }, error: null };
+      },
+      signOut: async () => {
+        localStorage.removeItem('user');
+        return { error: null };
+      },
+      getSession: async () => {
+        const userStr = localStorage.getItem('user');
+        if (!userStr) return { data: { session: null }, error: null };
+        const user = JSON.parse(userStr);
+        return { 
+          data: { 
+            session: { 
+              user,
+              access_token: 'mock-token',
+              refresh_token: 'mock-refresh-token'
+            } 
+          }, 
+          error: null 
+        };
+      }
     },
     from: () => ({
       select: () => ({ eq: () => ({ data: [], error: null }) }),

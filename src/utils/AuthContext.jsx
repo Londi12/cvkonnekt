@@ -4,7 +4,11 @@ import { getSupabase, signUp, signIn, signOut as supabaseSignOut } from '../lib/
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    // Initialize from localStorage if available
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -18,13 +22,29 @@ export const AuthProvider = ({ children }) => {
 
     const fetchUser = async () => {
       try {
+        // First check localStorage
+        const savedUser = localStorage.getItem('user');
+        if (savedUser) {
+          setUser(JSON.parse(savedUser));
+          setLoading(false);
+          return;
+        }
+
+        // If no saved user, try to get from Supabase
         const { data: { user }, error } = await supabase.auth.getUser();
         if (error) throw error;
-        setUser(user);
+        
+        if (user) {
+          setUser(user);
+          localStorage.setItem('user', JSON.stringify(user));
+        }
         setError(null);
       } catch (error) {
         console.error('Error fetching user:', error);
         setError(error.message);
+        // Clear invalid user data
+        localStorage.removeItem('user');
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -32,15 +52,21 @@ export const AuthProvider = ({ children }) => {
 
     fetchUser();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event);
-      setUser(session?.user || null);
+      if (session?.user) {
+        setUser(session.user);
+        localStorage.setItem('user', JSON.stringify(session.user));
+      } else {
+        setUser(null);
+        localStorage.removeItem('user');
+      }
       setError(null);
       setLoading(false);
     });
 
     return () => {
-      authListener?.unsubscribe();
+      subscription?.unsubscribe();
     };
   }, []);
 
@@ -48,12 +74,17 @@ export const AuthProvider = ({ children }) => {
     user,
     loading,
     error,
+    isAuthenticated: !!user,
     signUp: async (email, password) => {
       try {
         setLoading(true);
         setError(null);
         const { data, error } = await signUp(email, password);
         if (error) throw error;
+        if (data?.user) {
+          setUser(data.user);
+          localStorage.setItem('user', JSON.stringify(data.user));
+        }
         return { data, error: null };
       } catch (error) {
         console.error('Error signing up:', error);
@@ -69,6 +100,10 @@ export const AuthProvider = ({ children }) => {
         setError(null);
         const { data, error } = await signIn(email, password);
         if (error) throw error;
+        if (data?.user) {
+          setUser(data.user);
+          localStorage.setItem('user', JSON.stringify(data.user));
+        }
         return { data, error: null };
       } catch (error) {
         console.error('Error signing in:', error);
@@ -85,6 +120,7 @@ export const AuthProvider = ({ children }) => {
         const { error } = await supabaseSignOut();
         if (error) throw error;
         setUser(null);
+        localStorage.removeItem('user');
         return { error: null };
       } catch (error) {
         console.error('Error signing out:', error);
