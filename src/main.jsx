@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App';
-import './styles/index.css';
-import './styles/input.css';
-import './styles/print.css';
-import './utils/printUtils.js';
-import './utils/exportUtils.js';
+import '@styles/index.css';
+import '@styles/input.css';
+import '@styles/print.css';
+import '@utils/printUtils.js';
+import '@utils/exportUtils.js';
 
 // Initialize error handling
 const setupErrorHandling = () => {
@@ -32,4 +33,10 @@ const setupErrorHandling = () => {
 setupErrorHandling();
 
 // Remove any extra loading indicator (or extra DOM removal) so that the root div is the only child of body.
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>
+);

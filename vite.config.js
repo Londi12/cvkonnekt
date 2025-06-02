@@ -10,6 +10,14 @@ const __dirname = dirname(__filename);
 export default defineConfig({
   base: '/',
   plugins: [react()],
+  server: {
+    port: 8080,
+    strictPort: true,
+    host: true,
+    hmr: {
+      overlay: true
+    }
+  },
   build: {
     outDir: 'dist',
     emptyOutDir: true,
@@ -18,13 +26,8 @@ export default defineConfig({
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: true,
-        drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info', 'console.debug'],
-        passes: 2
-      },
-      format: {
-        comments: false
+        drop_console: false,
+        drop_debugger: false
       }
     },
     rollupOptions: {
@@ -64,16 +67,10 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, './src'),
       '@components': resolve(__dirname, './src/components'),
-      '@utils': resolve(__dirname, './utils')
+      '@utils': resolve(__dirname, './src/utils'),
+      '@styles': resolve(__dirname, './src/styles')
     },
-    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
-  },
-  server: {
-    port: 8080,
-    strictPort: true,
-    hmr: {
-      overlay: true
-    }
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.css']
   },
   preview: {
     port: 3000,
