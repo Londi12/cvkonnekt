@@ -1,16 +1,30 @@
 module.exports = {
   testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  moduleNameMapper: {
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    '\\.(gif|ttf|eot|svg|png)$': '<rootDir>/__mocks__/fileMock.js'
-  },
   transform: {
-    '^.+\\.(js|jsx)$': ['babel-jest', { configFile: './babel.config.js' }]
+    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { 
+      presets: ['@babel/preset-env', '@babel/preset-react'],
+      plugins: [
+        '@babel/plugin-transform-runtime',
+        ['@babel/plugin-transform-modules-commonjs', { allowTopLevelThis: true }]
+      ]
+    }]
   },
-  transformIgnorePatterns: [
-    '/node_modules/(?!(@supabase|@babel)/)'
-  ],
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
+    '^@components/(.*)$': '<rootDir>/src/components/$1',
+    '^@utils/(.*)$': '<rootDir>/utils/$1'
+  },
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testMatch: ['**/__tests__/**/*.test.[jt]s?(x)'],
-  moduleFileExtensions: ['js', 'jsx', 'json', 'node']
+  transformIgnorePatterns: [
+    '/node_modules/(?!(@supabase|@headlessui)/)'
+  ],
+  globals: {
+    'import.meta': {
+      env: {
+        VITE_SUPABASE_URL: 'test-url',
+        VITE_SUPABASE_ANON_KEY: 'test-key'
+      }
+    }
+  }
 }; 

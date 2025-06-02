@@ -96,6 +96,13 @@
   },
   "resolutions": {
     "glob": "^10.3.10",
-    "inflight": "^2.0.0"
+    "inflight": "^2.0.0",
+    "@babel/traverse": "^7.24.0",
+    "postcss": "^8.4.35"
+  },
+  "overrides": {
+    "glob": "^10.3.10",
+    "inflight": "^2.0.0",
+    "postcss": "^8.4.35"
   }
 }
