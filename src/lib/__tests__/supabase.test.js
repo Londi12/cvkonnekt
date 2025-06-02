@@ -1,25 +1,30 @@
 // Mock environment variables before imports
-process.env.VITE_SUPABASE_URL = 'test-url';
-process.env.VITE_SUPABASE_ANON_KEY = 'test-key';
+process.env.VITE_SUPABASE_URL = 'https://test.supabase.co';
+process.env.VITE_SUPABASE_ANON_KEY = 'eyJ-test-anon-key';
 
-// Mock Supabase client
+// Robust mock for Supabase client
+const mockSingle = jest.fn(() => ({ data: { id: 1 }, error: null }));
+const mockSelect = jest.fn(() => ({ data: [{ id: 1 }], error: null }));
+const mockEq = jest.fn(() => ({ select: jest.fn(() => ({ single: mockSingle })) }));
+const mockInsert = jest.fn(() => ({ select: jest.fn(() => ({ single: mockSingle })) }));
+const mockUpdate = jest.fn(() => ({ eq: mockEq }));
+const mockDelete = jest.fn(() => ({ eq: jest.fn(() => ({ data: null, error: null })) }));
+
 jest.mock('@supabase/supabase-js', () => ({
   createClient: jest.fn(() => ({
     auth: {
-      signUp: jest.fn(),
-      signInWithPassword: jest.fn(),
-      signOut: jest.fn(),
-      getSession: jest.fn(),
-      getUser: jest.fn(),
+      signUp: jest.fn(() => ({ data: { user: { id: 1 } }, error: null })),
+      signInWithPassword: jest.fn(() => ({ data: { user: { id: 1 } }, error: null })),
+      signOut: jest.fn(() => ({ error: null })),
+      getUser: jest.fn(() => ({ data: { user: { id: 1 } }, error: null })),
+      getSession: jest.fn(() => ({ data: { session: { user: { id: 1 } } }, error: null })),
     },
     from: jest.fn(() => ({
-      select: jest.fn().mockReturnThis(),
-      insert: jest.fn().mockReturnThis(),
-      update: jest.fn().mockReturnThis(),
-      delete: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn(),
-      data: [],
+      insert: mockInsert,
+      update: mockUpdate,
+      delete: mockDelete,
+      select: mockSelect,
+      eq: mockEq,
     })),
   })),
 }));
