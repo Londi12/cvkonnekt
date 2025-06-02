@@ -8,33 +8,38 @@ const mockSelect = jest.fn(() => ({ data: [{ id: 1 }], error: null }));
 const mockEq = jest.fn(() => ({ select: jest.fn(() => ({ single: mockSingle })) }));
 const mockInsert = jest.fn(() => ({ select: jest.fn(() => ({ single: mockSingle })) }));
 const mockUpdate = jest.fn(() => ({ eq: mockEq }));
-const mockDelete = jest.fn(() => ({ eq: jest.fn(() => ({ data: null, error: null })) }));
+const mockDelete = jest.fn(() => ({ eq: mockEq }));
+
+const mockSupabaseClient = {
+  auth: {
+    signUp: jest.fn(() => ({ data: { user: { id: 1 } }, error: null })),
+    signInWithPassword: jest.fn(() => ({ data: { user: { id: 1 } }, error: null })),
+    signOut: jest.fn(() => ({ error: null })),
+    getUser: jest.fn(() => ({ data: { user: { id: 1 } }, error: null })),
+    getSession: jest.fn(() => ({ data: { session: { user: { id: 1 } } }, error: null })),
+  },
+  from: jest.fn(() => ({
+    insert: mockInsert,
+    update: mockUpdate,
+    delete: mockDelete,
+    select: mockSelect,
+    eq: mockEq,
+  })),
+};
 
 jest.mock('@supabase/supabase-js', () => ({
-  createClient: jest.fn(() => ({
-    auth: {
-      signUp: jest.fn(() => ({ data: { user: { id: 1 } }, error: null })),
-      signInWithPassword: jest.fn(() => ({ data: { user: { id: 1 } }, error: null })),
-      signOut: jest.fn(() => ({ error: null })),
-      getUser: jest.fn(() => ({ data: { user: { id: 1 } }, error: null })),
-      getSession: jest.fn(() => ({ data: { session: { user: { id: 1 } } }, error: null })),
-    },
-    from: jest.fn(() => ({
-      insert: mockInsert,
-      update: mockUpdate,
-      delete: mockDelete,
-      select: mockSelect,
-      eq: mockEq,
-    })),
-  })),
+  createClient: jest.fn(() => mockSupabaseClient),
 }));
 
 // Import after mocking
-import { supabase, signUp, signIn, signOut, getCurrentUser, saveResume, getResumes, updateResume, deleteResume } from '../supabase';
+import { getSupabase, signUp, signIn, signOut, getCurrentUser, saveResume, getResumes, updateResume, deleteResume } from '../supabase';
 
 describe('Supabase Client', () => {
+  let supabase;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    supabase = getSupabase();
   });
 
   test('should create Supabase client with environment variables', () => {
@@ -88,7 +93,8 @@ describe('Supabase Client', () => {
     const resumeId = 1;
     await deleteResume(resumeId);
     expect(supabase.from).toHaveBeenCalledWith('resumes');
-    expect(supabase.from().delete).toHaveBeenCalled();
-    expect(supabase.from().eq).toHaveBeenCalledWith('id', resumeId);
+    const deleteChain = supabase.from();
+    expect(deleteChain.delete).toHaveBeenCalled();
+    expect(deleteChain.eq).toHaveBeenCalledWith('id', resumeId);
   });
 }); 
