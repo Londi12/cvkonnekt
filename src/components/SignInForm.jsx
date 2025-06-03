@@ -1,20 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../utils/AuthContext';
 
-const SignInForm = ({ onNav }) => {
+const SignInForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn, isAuthenticated, user, signOut } = useAuth();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    // Redirect if already authenticated
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Placeholder: Add authentication logic here
+    
     if (!email || !password) {
       setError('Please enter both email and password.');
       return;
     }
+    
+    setIsLoading(true);
     setError('');
-    // Simulate successful sign-in
-    if (onNav) onNav('home');
+    
+    try {
+      // First, sign in the user
+      const { data: { user: signedInUser }, error: signInError } = await signIn(email, password);
+      
+      if (signInError) {
+        throw signInError;
+      }
+      
+      // Check if user is admin
+      if (!signedInUser?.isAdmin) {
+        // Sign out non-admin users
+        await signOut();
+        throw new Error('Access denied. Please contact an administrator for access.');
+      }
+      
+      // Redirect to dashboard on successful admin login
+      navigate('/dashboard');
+    } catch (err) {
+      console.error('Sign in error:', err);
+      setError(err.message || 'Failed to sign in. Please check your credentials.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -48,14 +84,14 @@ const SignInForm = ({ onNav }) => {
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
         >
-          Sign In
+          {isLoading ? 'Signing in...' : 'Sign In'}
         </button>
         <div className="mt-4 text-center">
           <span>Don't have an account? </span>
           <button
             type="button"
             className="text-blue-600 hover:underline"
-            onClick={() => onNav && onNav('signup')}
+            onClick={() => navigate('/signup')}
           >
             Sign Up
           </button>

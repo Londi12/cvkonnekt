@@ -9,7 +9,6 @@ import BuilderPage from './components/BuilderPage';
 import SignInForm from './components/SignInForm';
 import { SignUpForm } from './components/SignUpForm';
 import { Navbar } from './components/Navbar';
-import Footer from './components/Footer';
 import { DonationModal } from './components/DonationModal';
 import { getResumes } from './lib/supabase';
 import { getTemplateComponent } from './utils/templateUtils.jsx';
@@ -73,13 +72,13 @@ function AppRoutes() {
   }, [resumeData]);
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="flex flex-col min-h-screen bg-gray-100">
       <Navbar 
         isAuthenticated={isAuthenticated}
         mobileMenuOpen={mobileMenuOpen}
         setMobileMenuOpen={setMobileMenuOpen}
       />
-      <main className="pt-16">
+      <main className="flex-1 pt-16 relative z-10">
         <Routes>
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route
@@ -125,7 +124,6 @@ function AppRoutes() {
           <Route path="/signup" element={<SignUpForm />} />
         </Routes>
       </main>
-      <Footer />
       <DonationModal 
         open={donationModalOpen}
         setOpen={setDonationModalOpen}

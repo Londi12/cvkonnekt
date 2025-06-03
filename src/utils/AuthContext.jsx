@@ -1,13 +1,31 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getMockSupabaseClient } from '../lib/supabase';
 
+// List of admin emails (in a real app, this would be stored in a database)
+const ADMIN_EMAILS = [
+  'admin@example.com',
+  // Add more admin emails as needed
+];
+
 const AuthContext = createContext(null);
+
+// Helper function to check if a user is an admin
+const checkIsAdmin = (email) => {
+  return ADMIN_EMAILS.includes(email?.toLowerCase());
+};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     // Initialize from localStorage if available
     const savedUser = localStorage.getItem('user');
-    return savedUser ? JSON.parse(savedUser) : null;
+    if (!savedUser) return null;
+    
+    const parsedUser = JSON.parse(savedUser);
+    // Ensure the user object has isAdmin property
+    return {
+      ...parsedUser,
+      isAdmin: checkIsAdmin(parsedUser?.email)
+    };
   });
   const [error, setError] = useState(null);
 
@@ -20,8 +38,12 @@ export const AuthProvider = ({ children }) => {
         if (error) throw error;
         
         if (user) {
-          setUser(user);
-          localStorage.setItem('user', JSON.stringify(user));
+          const userWithAdmin = {
+            ...user,
+            isAdmin: checkIsAdmin(user.email)
+          };
+          setUser(userWithAdmin);
+          localStorage.setItem('user', JSON.stringify(userWithAdmin));
         }
         setError(null);
       } catch (error) {
@@ -36,8 +58,12 @@ export const AuthProvider = ({ children }) => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
-        setUser(session.user);
-        localStorage.setItem('user', JSON.stringify(session.user));
+        const userWithAdmin = {
+          ...session.user,
+          isAdmin: checkIsAdmin(session.user.email)
+        };
+        setUser(userWithAdmin);
+        localStorage.setItem('user', JSON.stringify(userWithAdmin));
       } else {
         setUser(null);
         localStorage.removeItem('user');

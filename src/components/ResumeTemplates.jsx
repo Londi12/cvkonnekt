@@ -133,7 +133,7 @@ function ProfessionalTemplate({ data = {}, customStyle = {} }) {
   } = data || {};
 
   return (
-    <div className="p-6 bg-white border-t-4 border-gray-800">
+    <div className="p-6 bg-white">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-gray-800">{personalInfo.fullName || 'Your Name'}</h1>
@@ -399,10 +399,7 @@ function ResumeTemplatesComponent({ data, activeTemplate }) {
   
   return (
     <div id="resume-preview" className="resume-preview h-full">
-      <div className="template-name mb-2 text-sm text-gray-500 font-medium no-print">
-        {activeTemplate?.name || 'Modern'} Template
-      </div>
-      <div className="border border-gray-200 rounded-lg overflow-hidden h-[calc(100%-2rem)]">
+      <div className="h-full">
         <TemplateComponent data={data} customStyle={templateStyle} />
       </div>
     </div>
