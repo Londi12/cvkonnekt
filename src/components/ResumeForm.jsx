@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import { parseResume } from '../utils/resumeParser';
 
 export function ResumeForm({ activeSection, setActiveSection, resumeData, setResumeData, formErrors }) {
   const handleInputChange = (section, field, value) => {
@@ -91,10 +92,80 @@ export function ResumeForm({ activeSection, setActiveSection, resumeData, setRes
     }
   };
 
+  const handleResumeUpload = useCallback(async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      const parsedData = await parseResume(file);
+      
+      // Merge parsed data with existing data
+      setResumeData(prevData => ({
+        ...prevData,
+        personalInfo: {
+          ...prevData.personalInfo,
+          ...parsedData.personalInfo
+        },
+        professionalSummary: parsedData.professionalSummary || prevData.professionalSummary,
+        workExperience: [
+          ...prevData.workExperience,
+          ...parsedData.workExperience
+        ],
+        education: [
+          ...prevData.education,
+          ...parsedData.education
+        ],
+        skills: [
+          ...prevData.skills,
+          ...parsedData.skills
+        ],
+        certifications: [
+          ...prevData.certifications,
+          ...parsedData.certifications
+        ],
+        languages: [
+          ...prevData.languages,
+          ...parsedData.languages
+        ]
+      }));
+
+      alert('Resume imported successfully! Please review and edit the imported information.');
+    } catch (error) {
+      console.error('Error uploading resume:', error);
+      alert('Failed to parse resume. Please try again or fill in the information manually.');
+    }
+
+    // Reset file input
+    event.target.value = '';
+  }, [setResumeData]);
+
   const renderPersonalInfo = () => {
     return (
       <div className="space-y-4">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">Personal Information</h2>
+        
+        {/* Resume Import Section */}
+        <div className="p-4 bg-blue-50 rounded-lg mb-6">
+          <h3 className="text-lg font-medium text-blue-800 mb-2">Import Existing Resume</h3>
+          <p className="text-sm text-blue-600 mb-4">
+            Upload your existing resume (PDF or DOCX) to automatically fill in your information.
+          </p>
+          <div className="flex items-center justify-center w-full">
+            <label className="w-full flex flex-col items-center px-4 py-6 bg-white text-blue rounded-lg shadow-lg tracking-wide border border-blue-500 cursor-pointer hover:bg-blue-500 hover:text-white transition-colors duration-200">
+              <svg className="w-8 h-8" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <path d="M16.88 9.1A4 4 0 0 1 16 17H5a5 5 0 0 1-1-9.9V7a3 3 0 0 1 4.52-2.59A4.98 4.98 0 0 1 17 8c0 .38-.04.74-.12 1.1zM11 11h3l-4-4-4 4h3v3h2v-3z" />
+              </svg>
+              <span className="mt-2 text-base">Select a file</span>
+              <input
+                type="file"
+                className="hidden"
+                accept=".pdf,.docx"
+                onChange={handleResumeUpload}
+              />
+            </label>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">Full Name</label>
@@ -708,4 +779,4 @@ export function ResumeForm({ activeSection, setActiveSection, resumeData, setRes
       </div>
     </div>
   );
-} 
+}
