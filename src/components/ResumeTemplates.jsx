@@ -79,10 +79,12 @@ export const ModernTemplate = ({ data = {} }) => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-8 shadow-md">
+    <div className="bg-white p-8 shadow-md border border-gray-200 rounded-lg">
+      <div className="bg-gradient-to-r from-purple-100 to-blue-100 -m-8 p-8 mb-6">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-extrabold text-purple-800">{personalInfo.fullName || 'Your Name'}</h1>
+
+        <h1 className="text-3xl font-extrabold text-purple-900">{personalInfo.fullName || 'Your Name'}</h1>
         <p className="text-xl text-gray-600">{personalInfo.jobTitle || 'Your Job Title'}</p>
         <div className="mt-2 text-gray-600">
           <p>{personalInfo.email || ''} {personalInfo.phone ? `• ${personalInfo.phone}` : ''}</p>
@@ -203,7 +205,7 @@ export const ModernTemplate = ({ data = {} }) => {
 };
 
 // Professional Template Component
-export const ProfessionalTemplate = ({ data }) => {
+export const ProfessionalTemplate = ({ data = {} }) => {
   const { personalInfo, professionalSummary, workExperience, education, skills, certifications, languages, references } = data;
   
   return (
@@ -299,7 +301,7 @@ export const ProfessionalTemplate = ({ data }) => {
 };
 
 // Minimal Template Component
-export const MinimalTemplate = ({ data }) => {
+export const MinimalTemplate = ({ data = {} }) => {
   const { personalInfo, professionalSummary, workExperience, education, skills, certifications, languages, references } = data;
   
   return (
@@ -403,18 +405,25 @@ export const MinimalTemplate = ({ data }) => {
 export const ResumeTemplates = {
   modern: ModernTemplate,
   professional: ProfessionalTemplate,
-  minimal: MinimalTemplate
+  minimal: MinimalTemplate,
+  classic: ProfessionalTemplate, // Using ProfessionalTemplate as base for classic
+  technical: ModernTemplate,    // Using ModernTemplate as base for technical
+  graduate: MinimalTemplate     // Using MinimalTemplate as base for graduate
 };
 
 // Main ResumeTemplates component
 export const ResumeTemplatesComponent = ({ activeTemplate, resumeData }) => {
-  const TemplateComponent = ResumeTemplates[activeTemplate.id.toLowerCase()] || ModernTemplate;
+  // Ensure we have a valid template ID
+  const templateId = activeTemplate?.id?.toLowerCase() || 'modern';
+  
+  // Get the template component, fallback to ModernTemplate if not found
+  const TemplateComponent = ResumeTemplates[templateId] || ModernTemplate;
   
   return (
     <div className="resume-preview">
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-gray-800">Preview</h2>
-        <p className="text-sm text-gray-600">Template: {activeTemplate.name}</p>
+        <p className="text-sm text-gray-600">Template: {activeTemplate?.name || 'Modern'}</p>
       </div>
       <div className="resume-container">
         <TemplateComponent data={resumeData} />
