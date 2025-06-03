@@ -165,9 +165,10 @@ export const saveResume = async (resume) => {
   const supabase = getSupabase();
   const { data, error } = await supabase
     .from('resumes')
-    .insert(resume);
+    .insert(resume)
+    .select(); // Add select() to return the inserted data
   if (error) throw error;
-  return data[0];
+  return data?.[0] || null;
 };
 
 export const getResumes = async () => {
@@ -184,9 +185,10 @@ export const updateResume = async (id, resume) => {
   const { data, error } = await supabase
     .from('resumes')
     .update(resume)
-    .eq('id', id);
+    .eq('id', id)
+    .select(); // Add select() to return the updated data
   if (error) throw error;
-  return data[0];
+  return data?.[0] || null;
 };
 
 export const deleteResume = async (id) => {
