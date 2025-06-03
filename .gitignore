@@ -24,6 +24,7 @@ build/
 .cache/
 .npm/
 .npm-cache/
+npm-cache/
 
 # Logs
 logs/
