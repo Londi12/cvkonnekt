@@ -16,7 +16,6 @@ import { getTemplateComponent } from './utils/templateUtils.jsx';
 
 function AppRoutes() {
   const { user, isAuthenticated } = useAuth();
-  const [currentPage, setCurrentPage] = useState('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [donationModalOpen, setDonationModalOpen] = useState(false);
   const [activeTemplate, setActiveTemplate] = useState(() => {
@@ -37,74 +36,11 @@ function AppRoutes() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    const path = location.pathname.slice(1) || 'home';
-    setCurrentPage(path);
-  }, [location]);
-
   const handleSave = async () => {
     // implement save logic here
   };
 
-  return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar 
-        isAuthenticated={isAuthenticated}
-        mobileMenuOpen={mobileMenuOpen}
-        setMobileMenuOpen={setMobileMenuOpen}
-      />
-      <Routes>
-        <Route path="/" element={<Navigate to="/home" replace />} />
-        <Route
-          path="/home"
-          element={
-            <HomePage
-              onGetStarted={() => navigate('/templates')}
-              onDonate={() => setDonationModalOpen(true)}
-            />
-          }
-        />
-        <Route
-          path="/templates"
-          element={
-            <TemplatesPage
-              onTemplateSelect={(template) => {
-                setActiveTemplate(template);
-                navigate('/builder');
-              }}
-            />
-          }
-        />
-        <Route
-          path="/builder"
-          element={
-            <BuilderPage
-              activeTemplate={activeTemplate}
-              activeSection={activeSection}
-              setActiveSection={setActiveSection}
-              formErrors={formErrors}
-              setFormErrors={setFormErrors}
-              saving={saving}
-              lastSaved={lastSaved}
-              resumeData={resumeData}
-              setResumeData={setResumeData}
-              onSave={handleSave}
-            />
-          }
-        />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/signin" element={<SignInForm />} />
-        <Route path="/signup" element={<SignUpForm />} />
-      </Routes>
-      <Footer />
-      <DonationModal 
-        open={donationModalOpen}
-        setOpen={setDonationModalOpen}
-      />
-    </div>
-  );
-
+  // Fetch resumes when authenticated
   useEffect(() => {
     const fetchResumes = async () => {
       if (isAuthenticated) {
@@ -123,6 +59,7 @@ function AppRoutes() {
     fetchResumes();
   }, [isAuthenticated]);
 
+  // Save state to localStorage
   useEffect(() => {
     localStorage.setItem('activeTemplate', JSON.stringify(activeTemplate));
   }, [activeTemplate]);
@@ -135,64 +72,65 @@ function AppRoutes() {
     localStorage.setItem('resumeData', JSON.stringify(resumeData));
   }, [resumeData]);
 
-  const handleNav = (page) => {
-    setCurrentPage(page);
-    navigate(`#${page}`);
-  };
-
-  const TemplateComponent = getTemplateComponent(activeTemplate.id);
-
-  // Render the appropriate page (or builder) based on currentPage.
-  let pageComponent = null;
-  switch (currentPage) {
-    case 'home':
-      pageComponent = <HomePage onNav={handleNav} />;
-      break;
-    case 'templates':
-      pageComponent = <TemplatesPage onNav={handleNav} onSelectTemplate={setActiveTemplate} />;
-      break;
-    case 'builder':
-      pageComponent = (
-        <BuilderPage
-          activeTemplate={activeTemplate}
-          activeSection={activeSection}
-          resumeData={resumeData}
-          onUpdateResumeData={setResumeData}
-          onSetActiveSection={setActiveSection}
-          onSetFormErrors={setFormErrors}
-          onSaving={setSaving}
-          onLastSaved={setLastSaved}
-        />
-      );
-      break;
-    case 'signin':
-      pageComponent = <SignInForm onNav={handleNav} />;
-      break;
-    case 'signup':
-      pageComponent = <SignUpForm onNav={handleNav} />;
-      break;
-    default:
-      pageComponent = <HomePage onNav={handleNav} />;
-  }
-
-  // Render the donation modal (if open) and the app (with Navbar, Footer, and the page (or builder) component).
   return (
-    <>
-      {donationModalOpen && <DonationModal onClose={() => setDonationModalOpen(false)} />}
-      <Navbar
-        onNav={handleNav}
+    <div className="min-h-screen bg-gray-100">
+      <Navbar 
+        isAuthenticated={isAuthenticated}
         mobileMenuOpen={mobileMenuOpen}
-        onToggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)}
-        onOpenDonationModal={() => setDonationModalOpen(true)}
+        setMobileMenuOpen={setMobileMenuOpen}
       />
-      {currentPage === 'builder' ? (
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-          {pageComponent}
-          {TemplateComponent && <TemplateComponent resumeData={resumeData} />}
-        </div>
-      ) : ( pageComponent )}
-      <Footer onOpenDonationModal={() => setDonationModalOpen(true)} />
-    </>
+      <main className="pt-16">
+        <Routes>
+          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route
+            path="/home"
+            element={
+              <HomePage
+                onGetStarted={() => navigate('/templates')}
+                onDonate={() => setDonationModalOpen(true)}
+              />
+            }
+          />
+          <Route
+            path="/templates"
+            element={
+              <TemplatesPage
+                onTemplateSelect={(template) => {
+                  setActiveTemplate(template);
+                  navigate('/builder');
+                }}
+              />
+            }
+          />
+          <Route
+            path="/builder"
+            element={
+              <BuilderPage
+                activeTemplate={activeTemplate}
+                activeSection={activeSection}
+                setActiveSection={setActiveSection}
+                formErrors={formErrors}
+                setFormErrors={setFormErrors}
+                saving={saving}
+                lastSaved={lastSaved}
+                resumeData={resumeData}
+                setResumeData={setResumeData}
+                onSave={handleSave}
+              />
+            }
+          />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/signin" element={<SignInForm />} />
+          <Route path="/signup" element={<SignUpForm />} />
+        </Routes>
+      </main>
+      <Footer />
+      <DonationModal 
+        open={donationModalOpen}
+        setOpen={setDonationModalOpen}
+      />
+    </div>
   );
 }
 
