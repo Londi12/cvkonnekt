@@ -19,7 +19,15 @@ export function Navbar({ isAuthenticated, mobileMenuOpen, setMobileMenuOpen }) {
   }, [mobileMenuOpen, setMobileMenuOpen]);
 
   const handleNavigation = () => {
-    setMobileMenuOpen(false);
+    if (setMobileMenuOpen) {
+      setMobileMenuOpen(false);
+    }
+  };
+
+  const toggleMobileMenu = () => {
+    if (setMobileMenuOpen) {
+      setMobileMenuOpen(!mobileMenuOpen);
+    }
   };
 
   return (
@@ -102,7 +110,7 @@ export function Navbar({ isAuthenticated, mobileMenuOpen, setMobileMenuOpen }) {
           <div className="-mr-2 flex items-center sm:hidden">
             <button
               type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={toggleMobileMenu}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
               aria-controls="mobile-menu"
               aria-expanded={mobileMenuOpen}
@@ -148,7 +156,7 @@ export function Navbar({ isAuthenticated, mobileMenuOpen, setMobileMenuOpen }) {
         className={`fixed inset-0 z-40 transform ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out sm:hidden`}
         id="mobile-menu"
       >
-        <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setMobileMenuOpen(false)} />
+        <div className="fixed inset-0 bg-black bg-opacity-50" onClick={handleNavigation} />
         <div className="fixed inset-y-0 left-0 w-64 bg-white shadow-lg">
           <div className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
             <Link
