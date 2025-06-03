@@ -1,3 +1,16 @@
+import { createClient } from '@supabase/supabase-js';
+
+// Create a single supabase client for interacting with your database
+export const getSupabase = () => {
+  const isTest = process.env.MODE === 'test';
+  if (isTest) {
+    return getMockSupabaseClient();
+  }
+  const supabaseUrl = process.env.VITE_SUPABASE_URL;
+  const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
+  return createClient(supabaseUrl, supabaseAnonKey);
+};
+
 // Mock users database
 const mockUsers = {
   'test@example.com': {
@@ -149,7 +162,7 @@ export function getMockSupabaseClient() {
 
 // Resume data helper functions
 export const saveResume = async (resume) => {
-  const supabase = getMockSupabaseClient();
+  const supabase = getSupabase();
   const { data, error } = await supabase
     .from('resumes')
     .insert(resume);
@@ -158,7 +171,7 @@ export const saveResume = async (resume) => {
 };
 
 export const getResumes = async () => {
-  const supabase = getMockSupabaseClient();
+  const supabase = getSupabase();
   const { data, error } = await supabase
     .from('resumes')
     .select();
@@ -167,7 +180,7 @@ export const getResumes = async () => {
 };
 
 export const updateResume = async (id, resume) => {
-  const supabase = getMockSupabaseClient();
+  const supabase = getSupabase();
   const { data, error } = await supabase
     .from('resumes')
     .update(resume)
@@ -177,7 +190,7 @@ export const updateResume = async (id, resume) => {
 };
 
 export const deleteResume = async (id) => {
-  const supabase = getMockSupabaseClient();
+  const supabase = getSupabase();
   const { error } = await supabase
     .from('resumes')
     .delete()
@@ -189,7 +202,7 @@ export const deleteResume = async (id) => {
 export const uploadResumeFile = async (file, userId) => {
   const fileExt = file.name.split('.').pop();
   const fileName = `${userId}/${Date.now()}.${fileExt}`;
-  const supabase = getMockSupabaseClient();
+  const supabase = getSupabase();
   const { data, error } = await supabase.storage
     .from('resumes')
     .upload(fileName, file);
@@ -197,7 +210,7 @@ export const uploadResumeFile = async (file, userId) => {
 };
 
 export const getResumeFileUrl = async (path) => {
-  const supabase = getMockSupabaseClient();
+  const supabase = getSupabase();
   const { data } = await supabase.storage
     .from('resumes')
     .getPublicUrl(path);
@@ -205,9 +218,37 @@ export const getResumeFileUrl = async (path) => {
 };
 
 export const deleteResumeFile = async (path) => {
-  const supabase = getMockSupabaseClient();
+  const supabase = getSupabase();
   const { error } = await supabase.storage
     .from('resumes')
     .remove([path]);
   return { error };
+};
+
+// New functions for authentication
+export const signUp = async (email, password) => {
+  const supabase = getSupabase();
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  if (error) throw error;
+  return data;
+};
+
+export const signIn = async (email, password) => {
+  const supabase = getSupabase();
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) throw error;
+  return data;
+};
+
+export const signOut = async () => {
+  const supabase = getSupabase();
+  const { error } = await supabase.auth.signOut();
+  if (error) throw error;
+};
+
+export const getCurrentUser = async () => {
+  const supabase = getSupabase();
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error) throw error;
+  return user;
 }; 

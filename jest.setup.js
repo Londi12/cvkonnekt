@@ -1,5 +1,3 @@
-import '@testing-library/jest-dom';
-
 // Mock environment variables
 process.env.VITE_SUPABASE_URL = 'https://test.supabase.co';
 process.env.VITE_SUPABASE_ANON_KEY = 'test-anon-key';
@@ -12,7 +10,8 @@ global.import = {
   meta: {
     env: {
       VITE_SUPABASE_URL: 'https://test.supabase.co',
-      VITE_SUPABASE_ANON_KEY: 'test-anon-key'
+      VITE_SUPABASE_ANON_KEY: 'eyJ-test-anon-key',
+      MODE: 'test'
     }
   }
 };
@@ -23,7 +22,8 @@ Object.defineProperty(global, 'import', {
     meta: {
       env: {
         VITE_SUPABASE_URL: 'https://test.supabase.co',
-        VITE_SUPABASE_ANON_KEY: 'test-anon-key'
+        VITE_SUPABASE_ANON_KEY: 'eyJ-test-anon-key',
+        MODE: 'test'
       }
     }
   },
@@ -51,6 +51,15 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
   unobserve: jest.fn(),
   disconnect: jest.fn(),
 }));
+
+// Mock localStorage
+const localStorageMock = {
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+  clear: jest.fn()
+};
+global.localStorage = localStorageMock;
 
 // Suppress console errors during tests
 const originalError = console.error;
