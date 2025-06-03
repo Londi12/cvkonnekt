@@ -3,7 +3,7 @@ import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-
 import { AuthProvider, useAuth } from './utils/AuthContext';
 import HomePage from './components/HomePage';
 import { AboutPage } from './components/AboutPage';
-import ContactPage from './components/ContactPage';
+import { ContactPage } from './components/ContactPage';
 import { TemplatesPage } from './components/TemplatesPage';
 import BuilderPage from './components/BuilderPage';
 import SignInForm from './components/SignInForm';
