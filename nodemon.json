@@ -1,6 +1,0 @@
-{
-  "watch": ["improved-server.js", "src/", "public/"],
-  "ext": "js,json,jsx",
-  "ignore": ["node_modules/", "dist/"],
-  "exec": "node improved-server.js"
-} 

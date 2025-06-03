@@ -5,7 +5,7 @@ import HomePage from './components/HomePage';
 import { TemplatesPage } from './components/TemplatesPage';
 import BuilderPage from './components/BuilderPage';
 import SignInForm from './components/SignInForm';
-import SignUpForm from './components/SignUpForm';
+import { SignUpForm } from './components/SignUpForm';
 import { Navbar } from './components/Navbar';
 import Footer from './components/Footer';
 import DonationModal from './components/DonationModal';
