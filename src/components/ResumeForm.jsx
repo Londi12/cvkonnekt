@@ -2,6 +2,8 @@ import React, { useCallback } from 'react';
 import { parseResume } from '../utils/resumeParser';
 
 export function ResumeForm({ activeSection, setActiveSection, resumeData, setResumeData, formErrors }) {
+  const [uploadStatus, setUploadStatus] = React.useState({ loading: false, error: null });
+
   const handleInputChange = (section, field, value) => {
     setResumeData(prev => {
       if (section === 'personalInfo') {
@@ -96,6 +98,30 @@ export function ResumeForm({ activeSection, setActiveSection, resumeData, setRes
     const file = event.target.files[0];
     if (!file) return;
 
+    // Validate file type
+    const validTypes = ['.pdf', '.docx', 'application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!validTypes.some(type => file.type.includes(type) || file.name.toLowerCase().endsWith(type))) {
+      setUploadStatus({
+        loading: false,
+        error: 'Invalid file type. Please upload a PDF or DOCX file.'
+      });
+      event.target.value = '';
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    if (file.size > maxSize) {
+      setUploadStatus({
+        loading: false,
+        error: 'File is too large. Maximum size is 5MB.'
+      });
+      event.target.value = '';
+      return;
+    }
+
+    setUploadStatus({ loading: true, error: null });
+
     try {
       const parsedData = await parseResume(file);
       
@@ -129,10 +155,18 @@ export function ResumeForm({ activeSection, setActiveSection, resumeData, setRes
         ]
       }));
 
+      setUploadStatus({
+        loading: false,
+        error: null
+      });
+
       alert('Resume imported successfully! Please review and edit the imported information.');
     } catch (error) {
       console.error('Error uploading resume:', error);
-      alert('Failed to parse resume. Please try again or fill in the information manually.');
+      setUploadStatus({
+        loading: false,
+        error: 'Failed to parse resume. Please try again or fill in the information manually.'
+      });
     }
 
     // Reset file input
@@ -150,19 +184,43 @@ export function ResumeForm({ activeSection, setActiveSection, resumeData, setRes
           <p className="text-sm text-blue-600 mb-4">
             Upload your existing resume (PDF or DOCX) to automatically fill in your information.
           </p>
-          <div className="flex items-center justify-center w-full">
-            <label className="w-full flex flex-col items-center px-4 py-6 bg-white text-blue rounded-lg shadow-lg tracking-wide border border-blue-500 cursor-pointer hover:bg-blue-500 hover:text-white transition-colors duration-200">
-              <svg className="w-8 h-8" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                <path d="M16.88 9.1A4 4 0 0 1 16 17H5a5 5 0 0 1-1-9.9V7a3 3 0 0 1 4.52-2.59A4.98 4.98 0 0 1 17 8c0 .38-.04.74-.12 1.1zM11 11h3l-4-4-4 4h3v3h2v-3z" />
-              </svg>
-              <span className="mt-2 text-base">Select a file</span>
+          <div className="flex flex-col items-center justify-center w-full">
+            <label className={`w-full flex flex-col items-center px-4 py-6 bg-white text-blue rounded-lg shadow-lg tracking-wide border cursor-pointer transition-colors duration-200 ${
+              uploadStatus.loading 
+                ? 'border-gray-400 bg-gray-100'
+                : uploadStatus.error
+                ? 'border-red-500 hover:bg-red-50'
+                : 'border-blue-500 hover:bg-blue-500 hover:text-white'
+            }`}>
+              {uploadStatus.loading ? (
+                <div className="flex items-center space-x-2">
+                  <svg className="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 0 1 4 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>Parsing Resume...</span>
+                </div>
+              ) : (
+                <>
+                  <svg className="w-8 h-8" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M16.88 9.1A4 4 0 0 1 16 17H5a5 5 0 0 1-1-9.9V7a3 3 0 0 1 4.52-2.59A4.98 4.98 0 0 1 17 8c0 .38-.04.74-.12 1.1zM11 11h3l-4-4-4 4h3v3h2v-3z" />
+                  </svg>
+                  <span className="mt-2 text-base">{uploadStatus.error ? 'Try Again' : 'Select a file'}</span>
+                </>
+              )}
               <input
                 type="file"
                 className="hidden"
                 accept=".pdf,.docx"
                 onChange={handleResumeUpload}
+                disabled={uploadStatus.loading}
               />
             </label>
+            {uploadStatus.error && (
+              <div className="mt-2 text-sm text-red-600">
+                {uploadStatus.error}
+              </div>
+            )}
           </div>
         </div>
 
