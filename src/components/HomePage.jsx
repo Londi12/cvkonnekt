@@ -1,6 +1,8 @@
 import React from 'react';
 
-export function HomePage() {
+import { Link } from 'react-router-dom';
+
+export default function HomePage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-6xl mx-auto">
@@ -14,12 +16,12 @@ export function HomePage() {
               Our user-friendly CV builder helps you create professional, ATS-optimized resumes designed specifically for the South African job market.
             </p>
             <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
-              <a href="#templates" className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium text-lg hover:bg-blue-700 transition-colors text-center">
+              <Link to="/builder" className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium text-lg hover:bg-blue-700 transition-colors text-center">
                 Create Your CV
-              </a>
-              <a href="#templates" className="text-blue-600 hover:text-blue-800 font-medium">
+              </Link>
+              <Link to="/templates" className="text-blue-600 hover:text-blue-800 font-medium">
                 View Templates →
-              </a>
+              </Link>
             </div>
           </div>
           <div className="md:w-1/2">

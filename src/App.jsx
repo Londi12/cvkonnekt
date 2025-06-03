@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './utils/AuthContext';
 import HomePage from './components/HomePage';
-import TemplatesPage from './components/TemplatesPage';
+import { TemplatesPage } from './components/TemplatesPage';
 import BuilderPage from './components/BuilderPage';
 import SignInForm from './components/SignInForm';
 import SignUpForm from './components/SignUpForm';
-import Navbar from './components/Navbar';
+import { Navbar } from './components/Navbar';
 import Footer from './components/Footer';
 import DonationModal from './components/DonationModal';
 import { getResumes } from './lib/supabase';
-import { getTemplateComponent } from './utils/templateUtils';
+import { getTemplateComponent } from './utils/templateUtils.jsx';
 
 function AppRoutes() {
   const { user, isAuthenticated } = useAuth();
@@ -46,6 +46,43 @@ function AppRoutes() {
       setCurrentPage('home');
     }
   }, [location]);
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <Navbar 
+        isAuthenticated={isAuthenticated}
+        mobileMenuOpen={mobileMenuOpen}
+        setMobileMenuOpen={setMobileMenuOpen}
+      />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/templates" element={<TemplatesPage />} />
+        <Route path="/builder" element={
+          <BuilderPage 
+            activeTemplate={activeTemplate}
+            setActiveTemplate={setActiveTemplate}
+            activeSection={activeSection}
+            setActiveSection={setActiveSection}
+            resumeData={resumeData}
+            setResumeData={setResumeData}
+            formErrors={formErrors}
+            setFormErrors={setFormErrors}
+            saving={saving}
+            setSaving={setSaving}
+            lastSaved={lastSaved}
+            setLastSaved={setLastSaved}
+          />
+        } />
+        <Route path="/signin" element={<SignInForm />} />
+        <Route path="/signup" element={<SignUpForm />} />
+      </Routes>
+      <Footer />
+      <DonationModal 
+        open={donationModalOpen}
+        setOpen={setDonationModalOpen}
+      />
+    </div>
+  );
 
   useEffect(() => {
     const fetchResumes = async () => {

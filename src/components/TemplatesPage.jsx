@@ -1,6 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export function TemplatesPage({ navigate }) {
+export function TemplatesPage() {
+  const navigate = useNavigate();
   const templates = [
     {
       id: 'classic',

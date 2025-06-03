@@ -212,3 +212,5 @@ Object.entries(templates).forEach(([category, templates]) => {
     }, 'Template Content Here');
   });
 });
+
+export { templates };
