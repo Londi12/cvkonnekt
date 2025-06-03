@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { parseResume } from '../utils/resumeParser';
+import ResumeParser from '../utils/resumeParser';
 
 export function ResumeForm({ activeSection, setActiveSection, resumeData, setResumeData, formErrors }) {
   const [uploadStatus, setUploadStatus] = React.useState({ loading: false, error: null });
@@ -75,7 +75,11 @@ export function ResumeForm({ activeSection, setActiveSection, resumeData, setRes
           description: ''
         };
       case 'skills':
-        return { skill: '', level: 'Intermediate' };
+        return { 
+          id: Date.now(),
+          skill: '', 
+          level: 'Intermediate' 
+        };
       case 'certifications':
         return { 
           name: '', 
@@ -123,49 +127,101 @@ export function ResumeForm({ activeSection, setActiveSection, resumeData, setRes
     setUploadStatus({ loading: true, error: null });
 
     try {
-      const parsedData = await parseResume(file);
+      const parsedData = await ResumeParser.parseResume(file);
       
-      // Merge parsed data with existing data
+      // Debug: Log the structure of parsed data
+      console.group('Parsed Resume Data');
+      console.log('Full parsed object:', parsedData);
+      if (parsedData.personalInfo) {
+        console.log('Personal Info:', parsedData.personalInfo);
+      }
+      if (parsedData.workExperience) {
+        console.log('Work Experience:', parsedData.workExperience);
+      }
+      if (parsedData.education) {
+        console.log('Education:', parsedData.education);
+      }
+      if (parsedData.skills) {
+        console.log('Skills:', parsedData.skills);
+      }
+      console.groupEnd();
+      
+      // Ensure we have valid data before updating state
+      if (!parsedData || typeof parsedData !== 'object') {
+        throw new Error('Invalid resume data received');
+      }
+
+      // Map the parsed data to the expected structure
+      const mappedData = {
+        personalInfo: {
+          fullName: parsedData.personalInfo?.fullName || '',
+          jobTitle: parsedData.personalInfo?.jobTitle || '',
+          email: parsedData.personalInfo?.email || '',
+          phone: parsedData.personalInfo?.phone || '',
+          address: parsedData.personalInfo?.address || '',
+          city: parsedData.personalInfo?.city || '',
+          province: parsedData.personalInfo?.province || '',
+          postalCode: parsedData.personalInfo?.postalCode || '',
+          linkedin: parsedData.personalInfo?.linkedin || '',
+          website: parsedData.personalInfo?.website || ''
+        },
+        professionalSummary: parsedData.professionalSummary || '',
+        workExperience: (parsedData.workExperience || []).map(exp => ({
+          id: Date.now() + Math.random(),
+          jobTitle: exp.jobTitle || '',
+          employer: exp.employer || '',
+          city: exp.location || '',
+          startDate: exp.startDate || '',
+          endDate: exp.endDate === 'Present' ? '' : exp.endDate,
+          current: exp.endDate === 'Present',
+          description: exp.description || ''
+        })),
+        education: (parsedData.education || []).map(edu => ({
+          id: Date.now() + Math.random(),
+          type: edu.type || 'degree',
+          qualification: edu.qualification || '',
+          institution: edu.institution || '',
+          location: edu.location || '',
+          startDate: edu.startDate || '',
+          endDate: edu.endDate || '',
+          description: edu.description || ''
+ })),
+        skills: (parsedData.skills || []).map(skill => {
+          // Handle both string and object formats for skills
+          const skillName = typeof skill === 'object' ? skill.name || '' : skill;
+          const skillLevel = typeof skill === 'object' ? skill.level || 'Intermediate' : 'Intermediate';
+          
+          return {
+            id: Date.now() + Math.random(),
+            skill: skillName,
+            level: skillLevel
+          };
+        }),
+        certifications: [], // Not currently parsed
+        languages: [], // Not currently parsed
+        references: [] // Not currently parsed
+      };
+
+      // Update the resume data with the mapped data
       setResumeData(prevData => ({
         ...prevData,
-        personalInfo: {
-          ...prevData.personalInfo,
-          ...parsedData.personalInfo
-        },
-        professionalSummary: parsedData.professionalSummary || prevData.professionalSummary,
-        workExperience: [
-          ...prevData.workExperience,
-          ...parsedData.workExperience
-        ],
-        education: [
-          ...prevData.education,
-          ...parsedData.education
-        ],
-        skills: [
-          ...prevData.skills,
-          ...parsedData.skills
-        ],
-        certifications: [
-          ...prevData.certifications,
-          ...parsedData.certifications
-        ],
-        languages: [
-          ...prevData.languages,
-          ...parsedData.languages
-        ]
+        ...mappedData
       }));
 
       setUploadStatus({
         loading: false,
+        success: 'Resume imported successfully! Please review the imported information.',
         error: null
       });
-
-      alert('Resume imported successfully! Please review and edit the imported information.');
+      
+      // Auto-scroll to the top to show the success message
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
     } catch (error) {
       console.error('Error uploading resume:', error);
       setUploadStatus({
         loading: false,
-        error: 'Failed to parse resume. Please try again or fill in the information manually.'
+        error: `Failed to parse resume: ${error.message || 'Unknown error'}. Please try again or fill in the information manually.`
       });
     }
 
