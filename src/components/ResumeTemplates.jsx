@@ -453,8 +453,8 @@ function ResumeTemplatesComponent({ data, activeTemplate }) {
   const TemplateComponent = ResumeTemplates[templateId] || ModernTemplate;
   
   return (
-    <div className="resume-preview">
-      <div className="template-name mb-4 text-sm text-gray-500">
+    <div id="resume-preview" className="resume-preview">
+      <div className="template-name mb-4 text-sm text-gray-500 no-print">
         Template: {activeTemplate?.name || 'Modern'}
       </div>
       <TemplateComponent data={data} />

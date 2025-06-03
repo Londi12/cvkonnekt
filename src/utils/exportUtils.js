@@ -1,3 +1,5 @@
+import html2pdf from 'html2pdf.js';
+
 // Export utility for CV Builder
 // This script enables exporting resume data as a file
 
@@ -53,10 +55,45 @@ function readJsonFile(file) {
   });
 }
 
+// Function to export resume as PDF
+async function exportToPDF(elementId, filename) {
+  const element = document.getElementById(elementId);
+  if (!element) {
+    throw new Error('Resume element not found');
+  }
+
+  // PDF generation options
+  const opt = {
+    margin: [10, 10],
+    filename: filename,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      letterRendering: true
+    },
+    jsPDF: { 
+      unit: 'mm', 
+      format: 'a4', 
+      orientation: 'portrait'
+    }
+  };
+
+  try {
+    // Generate PDF
+    await html2pdf().set(opt).from(element).save();
+    return true;
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    throw error;
+  }
+}
+
 // Make the utility globally available
 window.resumeExportUtils = {
   exportResumeData,
-  readJsonFile
+  readJsonFile,
+  exportToPDF
 };
 
 console.log('CV Builder export utilities loaded');

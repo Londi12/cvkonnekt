@@ -78,13 +78,18 @@ export function ResumeActions({ resumeData, setResumeData }) {
     // Reset file input
     event.target.value = '';
   };
-
-  // Generate PDF using print utils or native print
-  const generatePDF = () => {
-    if (window.resumePrintUtils) {
-      window.resumePrintUtils.printResume();
-    } else {
-      window.print();
+  // Generate PDF using html2pdf
+  const generatePDF = async () => {
+    try {
+      if (window.resumeExportUtils && window.resumeExportUtils.exportToPDF) {
+        const fileName = `${resumeData.personalInfo?.fullName || 'resume'}-${new Date().toISOString().split('T')[0]}.pdf`;
+        await window.resumeExportUtils.exportToPDF('resume-preview', fileName);
+      } else {
+        // Fallback to browser print
+        window.print();
+      }
+    } catch (error) {
+      alert('Error generating PDF: ' + error.message);
     }
   };
 

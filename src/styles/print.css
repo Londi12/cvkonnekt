@@ -12,6 +12,24 @@
   print-color-adjust: exact !important;
 }
 
+/* High-quality fonts for PDF */
+@media print {
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* PDF Generation styles */
+#resume-preview {
+  background: white;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 20mm;
+  margin: 0 auto;
+  box-shadow: none;
+}
+
 /* Hide non-essential elements when printing */
 @media print {
   /* Hide UI elements */
