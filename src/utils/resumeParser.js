@@ -1,9 +1,9 @@
 import * as pdfjs from 'pdfjs-dist';
 import mammoth from 'mammoth';
 
-// Initialize PDF.js worker
-const pdfjsWorker = new URL('pdfjs-dist/build/pdf.worker.js', import.meta.url);
-pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker.toString();
+// Set the worker source to use CDN
+const pdfjsVersion = '2.16.105';
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.js`;
 
 // Regular expressions for extracting information
 const patterns = {
@@ -55,23 +55,27 @@ export class ResumeParser {
   async parsePDF(file) {
     try {
       const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
       
-      if (pdf.numPages === 0) {
-        throw new ParsingError('The PDF file appears to be empty.', 'general');
-      }
+      // Create a Uint8Array from the ArrayBuffer
+      const typedArray = new Uint8Array(arrayBuffer);
+      
+      // Get the PDF document
+      const loadingTask = pdfjs.getDocument(typedArray);
+      const pdf = await loadingTask.promise;
 
       let text = '';
-      let failedPages = [];
-      
+      const failedPages = [];
+
       for (let i = 1; i <= pdf.numPages; i++) {
         try {
           const page = await pdf.getPage(i);
           const content = await page.getTextContent();
-          text += content.items.map(item => item.str).join(' ') + '\n';
+          const strings = content.items.map(item => item.str);
+          text += strings.join(' ') + '\n\n';
         } catch (error) {
+          console.error(`Error parsing page ${i}:`, error);
           failedPages.push(i);
-          console.warn(`Failed to parse page ${i}:`, error);
+          continue;
         }
       }
 
@@ -448,6 +452,11 @@ export class ResumeParser {
 
 // Factory function to create parser instance
 export async function parseResume(file) {
+  // Ensure PDF.js is loaded
+  if (!window.pdfjsLib) {
+    window.pdfjsLib = await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.mjs');
+    window.pdfjsLib.GlobalWorkerOptions.workerPort = new Worker('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.mjs');
+  }
   if (!file) {
     throw new ParsingError('No file provided.', 'general');
   }

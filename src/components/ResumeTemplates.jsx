@@ -13,68 +13,54 @@ function ModernTemplate({ data = {}, customStyle = {} }) {
     references = []
   } = data || {};
 
-  const {
-    headerGradient = 'from-purple-100 to-blue-100',
-    accentColor = 'text-purple-700',
-    sectionBackground = 'bg-opacity-50'
-  } = customStyle;
-  
   return (
-    <div className="bg-white p-8 shadow-md border border-gray-200 rounded-lg">
-      <div className={`bg-gradient-to-r ${headerGradient} -m-8 p-8 mb-6`}>
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-extrabold text-gray-900">{personalInfo.fullName || 'Your Name'}</h1>
-          <p className="text-xl text-gray-600">{personalInfo.jobTitle || 'Your Job Title'}</p>
-          <div className="mt-2 text-gray-600">
-            <p>{personalInfo.email || ''} {personalInfo.phone ? `• ${personalInfo.phone}` : ''}</p>
-            <p>
-              {[
-                personalInfo.address,
-                personalInfo.city,
-                personalInfo.province,
-                personalInfo.postalCode
-              ].filter(Boolean).join(', ')}
-            </p>
-            {personalInfo.linkedin && (
-              <p>LinkedIn: {personalInfo.linkedin}</p>
-            )}
-            {personalInfo.website && (
-              <p>Website: {personalInfo.website}</p>
-            )}
-          </div>
+    <div className="p-6">
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-800 tracking-tight">
+          {personalInfo.fullName?.toUpperCase() || 'YOUR NAME'}
+        </h1>
+        <p className="text-sm text-purple-600 font-medium">
+          {personalInfo.jobTitle?.toUpperCase() || 'YOUR JOB TITLE'}
+        </p>
+        <div className="flex flex-wrap gap-2 text-xs text-gray-500 mt-1">
+          {personalInfo.email && <span>{personalInfo.email}</span>}
+          {personalInfo.phone && <span>• {personalInfo.phone}</span>}
+          {personalInfo.linkedIn && <span>• {personalInfo.linkedIn}</span>}
         </div>
       </div>
 
       {/* Professional Summary */}
       {professionalSummary && (
-        <div className={`mb-8 bg-white ${sectionBackground} p-3 rounded`}>
-          <h2 className={`text-xl font-bold ${accentColor} mb-4`}>Professional Summary</h2>
-          <p className="text-gray-700">{professionalSummary}</p>
+        <div className="mb-6">
+          <h2 className="text-sm font-bold text-gray-800 border-b border-gray-200 pb-1 mb-2">
+            PROFESSIONAL SUMMARY
+          </h2>
+          <p className="text-sm text-gray-700">{professionalSummary}</p>
         </div>
       )}
 
       {/* Work Experience */}
-      {workExperience && workExperience.length > 0 && (
-        <div className={`mb-8 bg-white ${sectionBackground} p-3 rounded`}>
-          <h2 className={`text-xl font-bold ${accentColor} mb-4`}>Work Experience</h2>
-          <div className="space-y-6">
+      {workExperience?.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-sm font-bold text-gray-800 border-b border-gray-200 pb-1 mb-3">
+            WORK EXPERIENCE
+          </h2>
+          <div className="space-y-4">
             {workExperience.map((exp, index) => (
               <div key={exp.id || index} className="mb-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-semibold">{exp.jobTitle || ''}</h3>
-                    <p className="text-gray-600">{exp.employer || ''}</p>
-                    <p className="text-sm text-gray-500">{exp.city || ''}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-600">
-                      {exp.startDate || ''} - {exp.current ? 'Present' : (exp.endDate || '')}
-                    </p>
+                <div className="flex justify-between">
+                  <h3 className="font-semibold text-gray-800">
+                    {exp.jobTitle?.toUpperCase()}
+                    {exp.employer && ` @ ${exp.employer.toUpperCase()}`}
+                  </h3>
+                  <div className="text-sm text-gray-600">
+                    {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
                   </div>
                 </div>
+                {exp.city && <p className="text-xs text-gray-500">{exp.city}</p>}
                 {exp.description && (
-                  <p className="mt-2 text-gray-700">{exp.description}</p>
+                  <p className="mt-1 text-sm text-gray-700">{exp.description}</p>
                 )}
               </div>
             ))}
@@ -83,57 +69,26 @@ function ModernTemplate({ data = {}, customStyle = {} }) {
       )}
 
       {/* Education */}
-      {education && education.length > 0 && (
-        <div className={`mb-8 bg-white ${sectionBackground} p-3 rounded`}>
-          <h2 className={`text-xl font-bold ${accentColor} mb-4`}>Education</h2>
+      {education?.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-sm font-bold text-gray-800 border-b border-gray-200 pb-1 mb-3">
+            EDUCATION
+          </h2>
           <div className="space-y-4">
             {education.map((edu, index) => (
-              <div key={edu.id || index} className="mb-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-semibold">{edu.qualification || ''}</h3>
-                    <p className="text-gray-600">{edu.institution || ''}</p>
-                    <p className="text-sm text-gray-500">{edu.location || ''}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-600">
-                      {edu.startDate || ''} - {edu.endDate || 'Present'}
-                    </p>
+              <div key={edu.id || index}>
+                <div className="flex justify-between">
+                  <h3 className="font-semibold text-gray-800">
+                    {edu.qualification}
+                    {edu.institution && `, ${edu.institution}`}
+                  </h3>
+                  <div className="text-sm text-gray-600">
+                    {edu.startDate} - {edu.endDate || 'Present'}
                   </div>
                 </div>
+                {edu.location && <p className="text-xs text-gray-500">{edu.location}</p>}
                 {edu.description && (
-                  <p className="mt-2 text-gray-700">{edu.description}</p>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Certifications */}
-      {certifications && certifications.length > 0 && (
-        <div className={`mb-8 bg-white ${sectionBackground} p-3 rounded`}>
-          <h2 className={`text-xl font-bold ${accentColor} mb-4`}>Certifications</h2>
-          <div className="space-y-4">
-            {certifications.map((cert, index) => (
-              <div key={cert.id || index} className="mb-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-semibold">{cert.name || ''}</h3>
-                    <p className="text-gray-600">{cert.issuer || ''}</p>
-                    {cert.credentialId && (
-                      <p className="text-sm text-gray-500">Credential ID: {cert.credentialId}</p>
-                    )}
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-600">
-                      {cert.date || ''}
-                      {cert.expiryDate && ` - ${cert.expiryDate}`}
-                    </p>
-                  </div>
-                </div>
-                {cert.description && (
-                  <p className="mt-2 text-gray-700">{cert.description}</p>
+                  <p className="mt-1 text-sm text-gray-700">{edu.description}</p>
                 )}
               </div>
             ))}
@@ -142,54 +97,20 @@ function ModernTemplate({ data = {}, customStyle = {} }) {
       )}
 
       {/* Skills */}
-      {skills && skills.length > 0 && (
-        <div className={`mb-8 bg-white ${sectionBackground} p-3 rounded`}>
-          <h2 className={`text-xl font-bold ${accentColor} mb-4`}>Skills</h2>
+      {skills?.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-sm font-bold text-gray-800 border-b border-gray-200 pb-1 mb-3">
+            SKILLS
+          </h2>
           <div className="flex flex-wrap gap-2">
             {skills.map((skill, index) => (
               <span
                 key={skill.id || index}
-                className="px-3 py-1 bg-white bg-opacity-70 rounded-full text-gray-700"
+                className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700"
               >
-                {skill.skill || ''} {skill.level && `(${skill.level})`}
+                {skill.skill}
+                {skill.level && ` (${skill.level})`}
               </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Languages */}
-      {languages && languages.length > 0 && (
-        <div className={`mb-8 bg-white ${sectionBackground} p-3 rounded`}>
-          <h2 className={`text-xl font-bold ${accentColor} mb-4`}>Languages</h2>
-          <div className="flex flex-wrap gap-2">
-            {languages.map((lang, index) => (
-              <span
-                key={lang.id || index}
-                className="px-3 py-1 bg-gray-100 rounded-full text-gray-700"
-              >
-                {lang.language || ''} {lang.proficiency && `(${lang.proficiency})`}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* References */}
-      {references && references.length > 0 && (
-        <div className={`mb-8 bg-white ${sectionBackground} p-3 rounded`}>
-          <h2 className={`text-xl font-bold ${accentColor} mb-4`}>References</h2>
-          <div className="space-y-4">
-            {references.map((ref, index) => (
-              <div key={ref.id || index} className="mb-4">
-                <h3 className="font-semibold">{ref.name || ''}</h3>
-                <p className="text-gray-600">
-                  {ref.position || ''} {ref.company ? `at ${ref.company}` : ''}
-                </p>
-                <p className="text-sm text-gray-500">
-                  {ref.email || ''} {ref.phone ? `• ${ref.phone}` : ''}
-                </p>
-              </div>
             ))}
           </div>
         </div>
@@ -199,7 +120,7 @@ function ModernTemplate({ data = {}, customStyle = {} }) {
 }
 
 // Professional Template Component
-function ProfessionalTemplate({ data = {} }) {
+function ProfessionalTemplate({ data = {}, customStyle = {} }) {
   const {
     personalInfo = {},
     professionalSummary = '',
@@ -210,94 +131,104 @@ function ProfessionalTemplate({ data = {} }) {
     languages = [],
     references = []
   } = data || {};
-  
+
   return (
-    <div className="bg-white p-8 shadow-md">
+    <div className="p-6 bg-white border-t-4 border-gray-800">
       {/* Header */}
-      <header className="border-b-2 border-blue-800 pb-4 mb-6">
-        <h1 className="text-2xl font-bold text-blue-800 mb-1">{personalInfo.fullName}</h1>
-        <p className="text-xl text-gray-700 mb-2">{personalInfo.jobTitle}</p>
-        
-        <div className="flex flex-wrap justify-center text-sm text-gray-600">
-          {personalInfo.email && (
-            <div className="mx-2 mb-1">
-              {personalInfo.email}
-            </div>
-          )}
-          {personalInfo.phone && (
-            <div className="mx-2 mb-1">
-              {personalInfo.phone}
-            </div>
-          )}
-          {personalInfo.address && (
-            <div className="mx-2 mb-1">
-              {personalInfo.address}, {personalInfo.city}, {personalInfo.province} {personalInfo.postalCode}
-            </div>
-          )}
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold text-gray-800">{personalInfo.fullName || 'Your Name'}</h1>
+        <p className="text-lg text-gray-600">{personalInfo.jobTitle || 'Your Job Title'}</p>
+        <div className="mt-1 text-sm text-gray-500">
+          {personalInfo.email || ''}
+          {personalInfo.phone && ` • ${personalInfo.phone}`}
+          {personalInfo.linkedIn && ` • ${personalInfo.linkedIn}`}
         </div>
-      </header>
-      
+      </div>
+
       {/* Professional Summary */}
       {professionalSummary && (
-        <section className="mb-6">
-          <h2 className="text-xl font-bold text-blue-800 mb-2">Professional Summary</h2>
-          <p className="text-gray-700">{professionalSummary}</p>
-        </section>
+        <div className="mb-6">
+          <h2 className="text-base font-medium text-gray-700 border-b border-gray-200 pb-1 mb-2">
+            Professional Summary
+          </h2>
+          <p className="text-sm text-gray-600">{professionalSummary}</p>
+        </div>
       )}
-      
+
       {/* Work Experience */}
-      {workExperience && workExperience.length > 0 && (
-        <section className="mb-6">
-          <h2 className="text-xl font-bold text-blue-800 mb-2">Experience</h2>
-          {workExperience.map((job) => (
-            <div key={job.id} className="mb-4">
-              <div className="flex justify-between items-baseline mb-1">
-                <h3 className="text-lg font-semibold text-gray-800">{job.jobTitle}</h3>
-                <span className="text-sm text-gray-600">
-                  {job.startDate} - {job.current ? 'Present' : job.endDate}
-                </span>
+      {workExperience?.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-base font-medium text-gray-700 border-b border-gray-200 pb-1 mb-3">
+            Work Experience
+          </h2>
+          <div className="space-y-4">
+            {workExperience.map((exp, index) => (
+              <div key={exp.id || index} className="mb-4">
+                <div className="flex justify-between">
+                  <h3 className="font-medium text-gray-800">
+                    {exp.jobTitle}
+                    {exp.employer && `, ${exp.employer}`}
+                  </h3>
+                  <div className="text-sm text-gray-600">
+                    {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
+                  </div>
+                </div>
+                {exp.city && <p className="text-xs text-gray-500">{exp.city}</p>}
+                {exp.description && (
+                  <p className="mt-1 text-sm text-gray-700">{exp.description}</p>
+                )}
               </div>
-              <p className="text-gray-700 font-medium mb-1">{job.employer}, {job.city}</p>
-              <p className="text-gray-700 whitespace-pre-line">{job.description}</p>
-            </div>
-          ))}
-        </section>
+            ))}
+          </div>
+        </div>
       )}
-      
+
       {/* Education */}
-      {education && education.length > 0 && (
-        <section className="mb-6">
-          <h2 className="text-xl font-bold text-blue-800 mb-2">Education</h2>
-          {education.map((edu) => (
-            <div key={edu.id} className="mb-4">
-              <div className="flex justify-between items-baseline mb-1">
-                <h3 className="text-lg font-semibold text-gray-800">{edu.qualification}</h3>
-                <span className="text-sm text-gray-600">
-                  {edu.startDate} - {edu.endDate || 'Present'}
-                </span>
+      {education?.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-base font-medium text-gray-700 border-b border-gray-200 pb-1 mb-3">
+            Education
+          </h2>
+          <div className="space-y-4">
+            {education.map((edu, index) => (
+              <div key={edu.id || index}>
+                <div className="flex justify-between">
+                  <h3 className="font-medium text-gray-800">
+                    {edu.qualification}
+                    {edu.institution && `, ${edu.institution}`}
+                  </h3>
+                  <div className="text-sm text-gray-600">
+                    {edu.startDate} - {edu.endDate || 'Present'}
+                  </div>
+                </div>
+                {edu.location && <p className="text-xs text-gray-500">{edu.location}</p>}
+                {edu.description && (
+                  <p className="mt-1 text-sm text-gray-600">{edu.description}</p>
+                )}
               </div>
-              <p className="text-gray-700 font-medium">{edu.institution}, {edu.location}</p>
-              {edu.description && <p className="text-gray-700 mt-1">{edu.description}</p>}
-            </div>
-          ))}
-        </section>
+            ))}
+          </div>
+        </div>
       )}
-      
+
       {/* Skills */}
-      {skills && skills.length > 0 && (
-        <section className="mb-6">
-          <h2 className="text-xl font-bold text-blue-800 mb-2">Skills</h2>
+      {skills?.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-base font-medium text-gray-700 border-b border-gray-200 pb-1 mb-3">
+            Skills
+          </h2>
           <div className="flex flex-wrap gap-2">
-            {skills.map((skill) => (
+            {skills.map((skill, index) => (
               <span
-                key={skill.id}
-                className="px-3 py-1 bg-gray-100 rounded-full text-gray-700"
+                key={skill.id || index}
+                className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700"
               >
-                {skill.skill} {skill.level && `(${skill.level})`}
+                {skill.skill}
+                {skill.level && ` (${skill.level})`}
               </span>
             ))}
           </div>
-        </section>
+        </div>
       )}
     </div>
   );
@@ -323,97 +254,106 @@ function MinimalTemplate({ data = {}, customStyle = {} }) {
   } = customStyle;
   
   return (
-    <div className="bg-white p-8 shadow-md">
+    <div className="p-6 bg-white">
       {/* Header */}
-      <header className={`text-center ${sectionSpacing} border-t-4 ${headerBorder}`}>
-        <h1 className="text-2xl font-bold text-gray-800 mb-1">{personalInfo.fullName}</h1>
-        <p className="text-lg text-gray-600 mb-3">{personalInfo.jobTitle}</p>
-        
-        <div className="flex flex-wrap justify-center text-sm text-gray-600 border-t border-b border-gray-200 py-2">
-          {personalInfo.email && (
-            <div className="mx-2 mb-1">
-              {personalInfo.email}
-            </div>
-          )}
-          {personalInfo.phone && (
-            <div className="mx-2 mb-1">
-              {personalInfo.phone}
-            </div>
-          )}
-          {personalInfo.address && (
-            <div className="mx-2 mb-1">
-              {personalInfo.address}, {personalInfo.city}
-            </div>
-          )}
-          {personalInfo.linkedin && (
-            <div className="mx-2 mb-1">
-              {personalInfo.linkedin}
-            </div>
-          )}
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-light text-gray-800 mb-1">
+          {personalInfo.fullName || 'Your Name'}
+        </h1>
+        <p className="text-lg text-gray-600 font-light">
+          {personalInfo.jobTitle || 'Your Job Title'}
+        </p>
+        <div className="flex flex-wrap justify-center gap-x-3 text-sm text-gray-500 mt-1">
+          {personalInfo.email && <span>{personalInfo.email}</span>}
+          {personalInfo.phone && <span>• {personalInfo.phone}</span>}
+          {personalInfo.linkedIn && <span>• {personalInfo.linkedIn}</span>}
         </div>
-      </header>
-      
+      </div>
+
       {/* Professional Summary */}
       {professionalSummary && (
-        <section className={sectionSpacing}>
-          <h2 className={`text-lg font-semibold ${accentColor} mb-2`}>Summary</h2>
-          <p className="text-gray-700">{professionalSummary}</p>
-        </section>
+        <div className="mb-8">
+          <h2 className="text-base font-light text-gray-700 mb-2">
+            Summary
+          </h2>
+          <p className="text-sm text-gray-600">{professionalSummary}</p>
+        </div>
       )}
-      
+
       {/* Work Experience */}
-      {workExperience && workExperience.length > 0 && (
-        <section className={sectionSpacing}>
-          <h2 className={`text-lg font-semibold ${accentColor} mb-3`}>Experience</h2>
-          {workExperience.map((job) => (
-            <div key={job.id} className="mb-4">
-              <div className="flex justify-between items-baseline">
-                <h3 className="text-base font-medium text-gray-800">{job.jobTitle} • {job.employer}</h3>
-                <span className="text-sm text-gray-600">
-                  {job.startDate} – {job.current ? 'Present' : job.endDate}
-                </span>
+      {workExperience?.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-base font-light text-gray-700 mb-3">
+            Experience
+          </h2>
+          <div className="space-y-4">
+            {workExperience.map((exp, index) => (
+              <div key={exp.id || index} className="mb-4">
+                <div className="flex justify-between">
+                  <h3 className="font-light text-gray-800">
+                    {exp.jobTitle}
+                    {exp.employer && `, ${exp.employer}`}
+                  </h3>
+                  <div className="text-sm text-gray-500">
+                    {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
+                  </div>
+                </div>
+                {exp.city && <p className="text-xs text-gray-500">{exp.city}</p>}
+                {exp.description && (
+                  <p className="mt-1 text-sm text-gray-600">{exp.description}</p>
+                )}
               </div>
-              <p className="text-sm text-gray-600 mb-1">{job.city}</p>
-              <p className="text-gray-700 text-sm whitespace-pre-line">{job.description}</p>
-            </div>
-          ))}
-        </section>
+            ))}
+          </div>
+        </div>
       )}
-      
+
       {/* Education */}
-      {education && education.length > 0 && (
-        <section className={sectionSpacing}>
-          <h2 className={`text-lg font-semibold ${accentColor} mb-3`}>Education</h2>
-          {education.map((edu) => (
-            <div key={edu.id} className="mb-4">
-              <div className="flex justify-between items-baseline">
-                <h3 className="text-base font-medium text-gray-800">{edu.qualification} • {edu.institution}</h3>
-                <span className="text-sm text-gray-600">
-                  {edu.startDate} – {edu.endDate || 'Present'}
-                </span>
+      {education?.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-base font-light text-gray-700 mb-3">
+            Education
+          </h2>
+          <div className="space-y-4">
+            {education.map((edu, index) => (
+              <div key={edu.id || index}>
+                <div className="flex justify-between">
+                  <h3 className="font-light text-gray-800">
+                    {edu.qualification}
+                    {edu.institution && `, ${edu.institution}`}
+                  </h3>
+                  <div className="text-sm text-gray-500">
+                    {edu.startDate} - {edu.endDate || 'Present'}
+                  </div>
+                </div>
+                {edu.location && <p className="text-xs text-gray-500">{edu.location}</p>}
+                {edu.description && (
+                  <p className="mt-1 text-sm text-gray-600">{edu.description}</p>
+                )}
               </div>
-              <p className="text-sm text-gray-600">{edu.location}</p>
-              {edu.description && <p className="text-gray-700 text-sm mt-1">{edu.description}</p>}
-            </div>
-          ))}
-        </section>
+            ))}
+          </div>
+        </div>
       )}
-      
+
       {/* Skills */}
-      {skills && skills.length > 0 && (
-        <section className={sectionSpacing}>
-          <h2 className={`text-lg font-semibold ${accentColor} mb-2`}>Skills</h2>
+      {skills?.length > 0 && (
+        <div>
+          <h2 className="text-base font-light text-gray-700 mb-3">
+            Skills
+          </h2>
           <div className="flex flex-wrap gap-2">
-            {skills.map((skill) => (
+            {skills.map((skill, index) => (
               <span
-                key={skill.id}
-                className="px-3 py-1 bg-gray-100 rounded-full text-gray-700 text-sm"
+                key={skill.id || index}
+                className="px-3 py-1 bg-gray-50 rounded-full text-sm text-gray-600"
               >
-                {skill.skill} {skill.level && `(${skill.level})`}
+                {skill.skill}
+                {skill.level && ` (${skill.level})`}
               </span>
             ))}
           </div>
-        </section>
+        </div>
       )}
     </div>
   );
@@ -449,15 +389,22 @@ const ResumeTemplates = {
 
 // Main template component
 function ResumeTemplatesComponent({ data, activeTemplate }) {
+  // Ensure we have a valid template ID, default to 'modern' if not provided
   const templateId = activeTemplate?.id?.toLowerCase() || 'modern';
+  // Get the template component or fall back to ModernTemplate
   const TemplateComponent = ResumeTemplates[templateId] || ModernTemplate;
   
+  // Apply template-specific styles if defined in the active template
+  const templateStyle = activeTemplate?.style || {};
+  
   return (
-    <div id="resume-preview" className="resume-preview">
-      <div className="template-name mb-4 text-sm text-gray-500 no-print">
-        Template: {activeTemplate?.name || 'Modern'}
+    <div id="resume-preview" className="resume-preview h-full">
+      <div className="template-name mb-2 text-sm text-gray-500 font-medium no-print">
+        {activeTemplate?.name || 'Modern'} Template
       </div>
-      <TemplateComponent data={data} />
+      <div className="border border-gray-200 rounded-lg overflow-hidden h-[calc(100%-2rem)]">
+        <TemplateComponent data={data} customStyle={templateStyle} />
+      </div>
     </div>
   );
 }

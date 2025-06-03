@@ -8,10 +8,19 @@ import autoprefixer from 'autoprefixer';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// PDF.js worker configuration
+const pdfjsWorkerPath = 'node_modules/pdfjs-dist/build/pdf.worker.js';
+
 // https://vitejs.dev/config/
 export default defineConfig({
   base: '/',
   plugins: [react()],
+  worker: {
+    format: 'es',
+  },
+  optimizeDeps: {
+    include: ['pdfjs-dist']
+  },
   server: {
     port: 3000,
     strictPort: false,
@@ -29,6 +38,7 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
+
     emptyOutDir: true,
     sourcemap: true,
     assetsDir: 'assets',
