@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Modern Template Component
-function ModernTemplate({ data = {} }) {
+function ModernTemplate({ data = {}, customStyle = {} }) {
   const {
     personalInfo = {},
     professionalSummary = '',
@@ -12,110 +12,52 @@ function ModernTemplate({ data = {} }) {
     languages = [],
     references = []
   } = data || {};
+
+  const {
+    headerGradient = 'from-purple-100 to-blue-100',
+    accentColor = 'text-purple-700',
+    sectionBackground = 'bg-opacity-50'
+  } = customStyle;
   
-  const renderEducation = (education) => {
-    if (!education || education.length === 0) return null;
-    
-    return (
-      <div className="mb-6">
-        <h2 className="text-xl font-bold mb-4">Education</h2>
-        <div className="space-y-4">
-          {education.map((edu, index) => (
-            <div key={edu.id || index} className="mb-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-semibold">{edu.qualification || ''}</h3>
-                  <p className="text-gray-600">{edu.institution || ''}</p>
-                  <p className="text-sm text-gray-500">{edu.location || ''}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-600">
-                    {edu.startDate || ''} - {edu.endDate || 'Present'}
-                  </p>
-                </div>
-              </div>
-              {edu.description && (
-                <p className="mt-2 text-gray-700">{edu.description}</p>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderCertifications = (certifications) => {
-    if (!certifications || certifications.length === 0) return null;
-    
-    return (
-      <div className="mb-6">
-        <h2 className="text-xl font-bold mb-4">Certifications</h2>
-        <div className="space-y-4">
-          {certifications.map((cert, index) => (
-            <div key={cert.id || index} className="mb-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-semibold">{cert.name || ''}</h3>
-                  <p className="text-gray-600">{cert.issuer || ''}</p>
-                  {cert.credentialId && (
-                    <p className="text-sm text-gray-500">Credential ID: {cert.credentialId}</p>
-                  )}
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-600">
-                    {cert.date || ''}
-                    {cert.expiryDate && ` - ${cert.expiryDate}`}
-                  </p>
-                </div>
-              </div>
-              {cert.description && (
-                <p className="mt-2 text-gray-700">{cert.description}</p>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="bg-white p-8 shadow-md border border-gray-200 rounded-lg">
-      <div className="bg-gradient-to-r from-purple-100 to-blue-100 -m-8 p-8 mb-6">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-extrabold text-purple-900">{personalInfo.fullName || 'Your Name'}</h1>
-        <p className="text-xl text-gray-600">{personalInfo.jobTitle || 'Your Job Title'}</p>
-        <div className="mt-2 text-gray-600">
-          <p>{personalInfo.email || ''} {personalInfo.phone ? `• ${personalInfo.phone}` : ''}</p>
-          <p>
-            {[
-              personalInfo.address,
-              personalInfo.city,
-              personalInfo.province,
-              personalInfo.postalCode
-            ].filter(Boolean).join(', ')}
-          </p>
-          {personalInfo.linkedin && (
-            <p>LinkedIn: {personalInfo.linkedin}</p>
-          )}
-          {personalInfo.website && (
-            <p>Website: {personalInfo.website}</p>
-          )}
+      <div className={`bg-gradient-to-r ${headerGradient} -m-8 p-8 mb-6`}>
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-extrabold text-gray-900">{personalInfo.fullName || 'Your Name'}</h1>
+          <p className="text-xl text-gray-600">{personalInfo.jobTitle || 'Your Job Title'}</p>
+          <div className="mt-2 text-gray-600">
+            <p>{personalInfo.email || ''} {personalInfo.phone ? `• ${personalInfo.phone}` : ''}</p>
+            <p>
+              {[
+                personalInfo.address,
+                personalInfo.city,
+                personalInfo.province,
+                personalInfo.postalCode
+              ].filter(Boolean).join(', ')}
+            </p>
+            {personalInfo.linkedin && (
+              <p>LinkedIn: {personalInfo.linkedin}</p>
+            )}
+            {personalInfo.website && (
+              <p>Website: {personalInfo.website}</p>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Professional Summary */}
       {professionalSummary && (
-        <div className="mb-8 bg-white bg-opacity-50 p-3 rounded">
-          <h2 className="text-xl font-bold text-purple-700 mb-4">Professional Summary</h2>
+        <div className={`mb-8 bg-white ${sectionBackground} p-3 rounded`}>
+          <h2 className={`text-xl font-bold ${accentColor} mb-4`}>Professional Summary</h2>
           <p className="text-gray-700">{professionalSummary}</p>
         </div>
       )}
 
       {/* Work Experience */}
       {workExperience && workExperience.length > 0 && (
-        <div className="mb-8 bg-white bg-opacity-50 p-3 rounded">
-          <h2 className="text-xl font-bold text-purple-700 mb-4">Work Experience</h2>
+        <div className={`mb-8 bg-white ${sectionBackground} p-3 rounded`}>
+          <h2 className={`text-xl font-bold ${accentColor} mb-4`}>Work Experience</h2>
           <div className="space-y-6">
             {workExperience.map((exp, index) => (
               <div key={exp.id || index} className="mb-4">
@@ -141,15 +83,68 @@ function ModernTemplate({ data = {} }) {
       )}
 
       {/* Education */}
-      {renderEducation(education)}
+      {education && education.length > 0 && (
+        <div className={`mb-8 bg-white ${sectionBackground} p-3 rounded`}>
+          <h2 className={`text-xl font-bold ${accentColor} mb-4`}>Education</h2>
+          <div className="space-y-4">
+            {education.map((edu, index) => (
+              <div key={edu.id || index} className="mb-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-semibold">{edu.qualification || ''}</h3>
+                    <p className="text-gray-600">{edu.institution || ''}</p>
+                    <p className="text-sm text-gray-500">{edu.location || ''}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-600">
+                      {edu.startDate || ''} - {edu.endDate || 'Present'}
+                    </p>
+                  </div>
+                </div>
+                {edu.description && (
+                  <p className="mt-2 text-gray-700">{edu.description}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Certifications */}
-      {renderCertifications(certifications)}
+      {certifications && certifications.length > 0 && (
+        <div className={`mb-8 bg-white ${sectionBackground} p-3 rounded`}>
+          <h2 className={`text-xl font-bold ${accentColor} mb-4`}>Certifications</h2>
+          <div className="space-y-4">
+            {certifications.map((cert, index) => (
+              <div key={cert.id || index} className="mb-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-semibold">{cert.name || ''}</h3>
+                    <p className="text-gray-600">{cert.issuer || ''}</p>
+                    {cert.credentialId && (
+                      <p className="text-sm text-gray-500">Credential ID: {cert.credentialId}</p>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-600">
+                      {cert.date || ''}
+                      {cert.expiryDate && ` - ${cert.expiryDate}`}
+                    </p>
+                  </div>
+                </div>
+                {cert.description && (
+                  <p className="mt-2 text-gray-700">{cert.description}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Skills */}
       {skills && skills.length > 0 && (
-        <div className="mb-8 bg-white bg-opacity-50 p-3 rounded">
-          <h2 className="text-xl font-bold text-purple-700 mb-4">Skills</h2>
+        <div className={`mb-8 bg-white ${sectionBackground} p-3 rounded`}>
+          <h2 className={`text-xl font-bold ${accentColor} mb-4`}>Skills</h2>
           <div className="flex flex-wrap gap-2">
             {skills.map((skill, index) => (
               <span
@@ -165,8 +160,8 @@ function ModernTemplate({ data = {} }) {
 
       {/* Languages */}
       {languages && languages.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">Languages</h2>
+        <div className={`mb-8 bg-white ${sectionBackground} p-3 rounded`}>
+          <h2 className={`text-xl font-bold ${accentColor} mb-4`}>Languages</h2>
           <div className="flex flex-wrap gap-2">
             {languages.map((lang, index) => (
               <span
@@ -182,8 +177,8 @@ function ModernTemplate({ data = {} }) {
 
       {/* References */}
       {references && references.length > 0 && (
-        <div>
-          <h2 className="text-xl font-bold mb-4">References</h2>
+        <div className={`mb-8 bg-white ${sectionBackground} p-3 rounded`}>
+          <h2 className={`text-xl font-bold ${accentColor} mb-4`}>References</h2>
           <div className="space-y-4">
             {references.map((ref, index) => (
               <div key={ref.id || index} className="mb-4">
@@ -199,7 +194,6 @@ function ModernTemplate({ data = {} }) {
           </div>
         </div>
       )}
-      </div>
     </div>
   );
 }
@@ -310,7 +304,7 @@ function ProfessionalTemplate({ data = {} }) {
 }
 
 // Minimal Template Component
-function MinimalTemplate({ data = {} }) {
+function MinimalTemplate({ data = {}, customStyle = {} }) {
   const {
     personalInfo = {},
     professionalSummary = '',
@@ -321,11 +315,17 @@ function MinimalTemplate({ data = {} }) {
     languages = [],
     references = []
   } = data || {};
+
+  const {
+    headerBorder = 'border-gray-300',
+    accentColor = 'text-gray-800',
+    sectionSpacing = 'mb-6'
+  } = customStyle;
   
   return (
     <div className="bg-white p-8 shadow-md">
       {/* Header */}
-      <header className="text-center mb-8">
+      <header className={`text-center ${sectionSpacing} border-t-4 ${headerBorder}`}>
         <h1 className="text-2xl font-bold text-gray-800 mb-1">{personalInfo.fullName}</h1>
         <p className="text-lg text-gray-600 mb-3">{personalInfo.jobTitle}</p>
         
@@ -355,16 +355,16 @@ function MinimalTemplate({ data = {} }) {
       
       {/* Professional Summary */}
       {professionalSummary && (
-        <section className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">Summary</h2>
+        <section className={sectionSpacing}>
+          <h2 className={`text-lg font-semibold ${accentColor} mb-2`}>Summary</h2>
           <p className="text-gray-700">{professionalSummary}</p>
         </section>
       )}
       
       {/* Work Experience */}
       {workExperience && workExperience.length > 0 && (
-        <section className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-3">Experience</h2>
+        <section className={sectionSpacing}>
+          <h2 className={`text-lg font-semibold ${accentColor} mb-3`}>Experience</h2>
           {workExperience.map((job) => (
             <div key={job.id} className="mb-4">
               <div className="flex justify-between items-baseline">
@@ -382,8 +382,8 @@ function MinimalTemplate({ data = {} }) {
       
       {/* Education */}
       {education && education.length > 0 && (
-        <section className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-3">Education</h2>
+        <section className={sectionSpacing}>
+          <h2 className={`text-lg font-semibold ${accentColor} mb-3`}>Education</h2>
           {education.map((edu) => (
             <div key={edu.id} className="mb-4">
               <div className="flex justify-between items-baseline">
@@ -401,8 +401,8 @@ function MinimalTemplate({ data = {} }) {
       
       {/* Skills */}
       {skills && skills.length > 0 && (
-        <section className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">Skills</h2>
+        <section className={sectionSpacing}>
+          <h2 className={`text-lg font-semibold ${accentColor} mb-2`}>Skills</h2>
           <div className="flex flex-wrap gap-2">
             {skills.map((skill) => (
               <span
@@ -425,8 +425,26 @@ const ResumeTemplates = {
   professional: ProfessionalTemplate,
   minimal: MinimalTemplate,
   classic: ProfessionalTemplate,
-  technical: ModernTemplate,
-  graduate: MinimalTemplate
+  technical: (props) => (
+    <ModernTemplate 
+      {...props} 
+      customStyle={{
+        headerGradient: 'from-green-100 to-blue-100',
+        accentColor: 'text-green-700',
+        sectionBackground: 'bg-opacity-60'
+      }}
+    />
+  ),
+  graduate: (props) => (
+    <MinimalTemplate 
+      {...props}
+      customStyle={{
+        headerBorder: 'border-yellow-500',
+        accentColor: 'text-yellow-700',
+        sectionSpacing: 'mb-5'
+      }}
+    />
+  )
 };
 
 // Main template component
