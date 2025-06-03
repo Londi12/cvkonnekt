@@ -8,7 +8,7 @@ import SignInForm from './components/SignInForm';
 import { SignUpForm } from './components/SignUpForm';
 import { Navbar } from './components/Navbar';
 import Footer from './components/Footer';
-import DonationModal from './components/DonationModal';
+import { DonationModal } from './components/DonationModal';
 import { getResumes } from './lib/supabase';
 import { getTemplateComponent } from './utils/templateUtils.jsx';
 
