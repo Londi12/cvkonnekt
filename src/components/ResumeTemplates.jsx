@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Modern Template Component
-export const ModernTemplate = ({ data = {} }) => {
+function ModernTemplate({ data = {} }) {
   const {
     personalInfo = {},
     professionalSummary = '',
@@ -81,132 +81,141 @@ export const ModernTemplate = ({ data = {} }) => {
   return (
     <div className="bg-white p-8 shadow-md border border-gray-200 rounded-lg">
       <div className="bg-gradient-to-r from-purple-100 to-blue-100 -m-8 p-8 mb-6">
-      {/* Header */}
-      <div className="text-center mb-8">
-
-        <h1 className="text-3xl font-extrabold text-purple-900">{personalInfo.fullName || 'Your Name'}</h1>
-        <p className="text-xl text-gray-600">{personalInfo.jobTitle || 'Your Job Title'}</p>
-        <div className="mt-2 text-gray-600">
-          <p>{personalInfo.email || ''} {personalInfo.phone ? `• ${personalInfo.phone}` : ''}</p>
-          <p>
-            {[
-              personalInfo.address,
-              personalInfo.city,
-              personalInfo.province,
-              personalInfo.postalCode
-            ].filter(Boolean).join(', ')}
-          </p>
-          {personalInfo.linkedin && (
-            <p>LinkedIn: {personalInfo.linkedin}</p>
-          )}
-          {personalInfo.website && (
-            <p>Website: {personalInfo.website}</p>
-          )}
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-extrabold text-purple-900">{personalInfo.fullName || 'Your Name'}</h1>
+          <p className="text-xl text-gray-600">{personalInfo.jobTitle || 'Your Job Title'}</p>
+          <div className="mt-2 text-gray-600">
+            <p>{personalInfo.email || ''} {personalInfo.phone ? `• ${personalInfo.phone}` : ''}</p>
+            <p>
+              {[
+                personalInfo.address,
+                personalInfo.city,
+                personalInfo.province,
+                personalInfo.postalCode
+              ].filter(Boolean).join(', ')}
+            </p>
+            {personalInfo.linkedin && (
+              <p>LinkedIn: {personalInfo.linkedin}</p>
+            )}
+            {personalInfo.website && (
+              <p>Website: {personalInfo.website}</p>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Professional Summary */}
-      {professionalSummary && (
-        <div className="mb-8 bg-white bg-opacity-50 p-3 rounded">
-          <h2 className="text-xl font-bold text-purple-700 mb-4">Professional Summary</h2>
-          <p className="text-gray-700">{professionalSummary}</p>
-        </div>
-      )}
+        {/* Professional Summary */}
+        {professionalSummary && (
+          <div className="mb-8 bg-white bg-opacity-50 p-3 rounded">
+            <h2 className="text-xl font-bold text-purple-700 mb-4">Professional Summary</h2>
+            <p className="text-gray-700">{professionalSummary}</p>
+          </div>
+        )}
 
-      {/* Work Experience */}
-      {workExperience && workExperience.length > 0 && (
-        <div className="mb-8 bg-white bg-opacity-50 p-3 rounded">
-          <h2 className="text-xl font-bold text-purple-700 mb-4">Work Experience</h2>
-          <div className="space-y-6">
-            {workExperience.map((exp, index) => (
-              <div key={exp.id || index} className="mb-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-semibold">{exp.jobTitle || ''}</h3>
-                    <p className="text-gray-600">{exp.employer || ''}</p>
-                    <p className="text-sm text-gray-500">{exp.city || ''}</p>
+        {/* Work Experience */}
+        {workExperience && workExperience.length > 0 && (
+          <div className="mb-8 bg-white bg-opacity-50 p-3 rounded">
+            <h2 className="text-xl font-bold text-purple-700 mb-4">Work Experience</h2>
+            <div className="space-y-6">
+              {workExperience.map((exp, index) => (
+                <div key={exp.id || index} className="mb-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-semibold">{exp.jobTitle || ''}</h3>
+                      <p className="text-gray-600">{exp.employer || ''}</p>
+                      <p className="text-sm text-gray-500">{exp.city || ''}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-600">
+                        {exp.startDate || ''} - {exp.current ? 'Present' : (exp.endDate || '')}
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-600">
-                      {exp.startDate || ''} - {exp.current ? 'Present' : (exp.endDate || '')}
-                    </p>
-                  </div>
+                  {exp.description && (
+                    <p className="mt-2 text-gray-700">{exp.description}</p>
+                  )}
                 </div>
-                {exp.description && (
-                  <p className="mt-2 text-gray-700">{exp.description}</p>
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Education */}
-      {renderEducation(education)}
+        {/* Education */}
+        {renderEducation(education)}
 
-      {/* Certifications */}
-      {renderCertifications(certifications)}
+        {/* Certifications */}
+        {renderCertifications(certifications)}
 
-      {/* Skills */}
-      {skills && skills.length > 0 && (
-        <div className="mb-8 bg-white bg-opacity-50 p-3 rounded">
-          <h2 className="text-xl font-bold text-purple-700 mb-4">Skills</h2>
-          <div className="flex flex-wrap gap-2">
-            {skills.map((skill, index) => (
-              <span
-                key={skill.id || index}
-                className="px-3 py-1 bg-white bg-opacity-70 rounded-full text-gray-700"
-              >
-                {skill.skill || ''} {skill.level && `(${skill.level})`}
-              </span>
-            ))}
+        {/* Skills */}
+        {skills && skills.length > 0 && (
+          <div className="mb-8 bg-white bg-opacity-50 p-3 rounded">
+            <h2 className="text-xl font-bold text-purple-700 mb-4">Skills</h2>
+            <div className="flex flex-wrap gap-2">
+              {skills.map((skill, index) => (
+                <span
+                  key={skill.id || index}
+                  className="px-3 py-1 bg-white bg-opacity-70 rounded-full text-gray-700"
+                >
+                  {skill.skill || ''} {skill.level && `(${skill.level})`}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Languages */}
-      {languages && languages.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">Languages</h2>
-          <div className="flex flex-wrap gap-2">
-            {languages.map((lang, index) => (
-              <span
-                key={lang.id || index}
-                className="px-3 py-1 bg-gray-100 rounded-full text-gray-700"
-              >
-                {lang.language || ''} {lang.proficiency && `(${lang.proficiency})`}
-              </span>
-            ))}
+        {/* Languages */}
+        {languages && languages.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-xl font-bold mb-4">Languages</h2>
+            <div className="flex flex-wrap gap-2">
+              {languages.map((lang, index) => (
+                <span
+                  key={lang.id || index}
+                  className="px-3 py-1 bg-gray-100 rounded-full text-gray-700"
+                >
+                  {lang.language || ''} {lang.proficiency && `(${lang.proficiency})`}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* References */}
-      {references && references.length > 0 && (
-        <div>
-          <h2 className="text-xl font-bold mb-4">References</h2>
-          <div className="space-y-4">
-            {references.map((ref, index) => (
-              <div key={ref.id || index} className="mb-4">
-                <h3 className="font-semibold">{ref.name || ''}</h3>
-                <p className="text-gray-600">
-                  {ref.position || ''} {ref.company ? `at ${ref.company}` : ''}
-                </p>
-                <p className="text-sm text-gray-500">
-                  {ref.email || ''} {ref.phone ? `• ${ref.phone}` : ''}
-                </p>
-              </div>
-            ))}
+        {/* References */}
+        {references && references.length > 0 && (
+          <div>
+            <h2 className="text-xl font-bold mb-4">References</h2>
+            <div className="space-y-4">
+              {references.map((ref, index) => (
+                <div key={ref.id || index} className="mb-4">
+                  <h3 className="font-semibold">{ref.name || ''}</h3>
+                  <p className="text-gray-600">
+                    {ref.position || ''} {ref.company ? `at ${ref.company}` : ''}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {ref.email || ''} {ref.phone ? `• ${ref.phone}` : ''}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
-};
+}
 
 // Professional Template Component
-export const ProfessionalTemplate = ({ data = {} }) => {
-  const { personalInfo, professionalSummary, workExperience, education, skills, certifications, languages, references } = data;
+function ProfessionalTemplate({ data = {} }) {
+  const {
+    personalInfo = {},
+    professionalSummary = '',
+    workExperience = [],
+    education = [],
+    skills = [],
+    certifications = [],
+    languages = [],
+    references = []
+  } = data || {};
   
   return (
     <div className="bg-white p-8 shadow-md">
@@ -298,11 +307,20 @@ export const ProfessionalTemplate = ({ data = {} }) => {
       )}
     </div>
   );
-};
+}
 
 // Minimal Template Component
-export const MinimalTemplate = ({ data = {} }) => {
-  const { personalInfo, professionalSummary, workExperience, education, skills, certifications, languages, references } = data;
+function MinimalTemplate({ data = {} }) {
+  const {
+    personalInfo = {},
+    professionalSummary = '',
+    workExperience = [],
+    education = [],
+    skills = [],
+    certifications = [],
+    languages = [],
+    references = []
+  } = data || {};
   
   return (
     <div className="bg-white p-8 shadow-md">
@@ -399,35 +417,37 @@ export const MinimalTemplate = ({ data = {} }) => {
       )}
     </div>
   );
-};
+}
 
-// Create and export all templates as an object
-export const ResumeTemplates = {
+// Template mapping object
+const ResumeTemplates = {
   modern: ModernTemplate,
   professional: ProfessionalTemplate,
   minimal: MinimalTemplate,
-  classic: ProfessionalTemplate, // Using ProfessionalTemplate as base for classic
-  technical: ModernTemplate,    // Using ModernTemplate as base for technical
-  graduate: MinimalTemplate     // Using MinimalTemplate as base for graduate
+  classic: ProfessionalTemplate,
+  technical: ModernTemplate,
+  graduate: MinimalTemplate
 };
 
-// Main ResumeTemplates component
-export const ResumeTemplatesComponent = ({ activeTemplate, resumeData }) => {
-  // Ensure we have a valid template ID
+// Main template component
+function ResumeTemplatesComponent({ data, activeTemplate }) {
   const templateId = activeTemplate?.id?.toLowerCase() || 'modern';
-  
-  // Get the template component, fallback to ModernTemplate if not found
   const TemplateComponent = ResumeTemplates[templateId] || ModernTemplate;
-  
+
   return (
     <div className="resume-preview">
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold text-gray-800">Preview</h2>
-        <p className="text-sm text-gray-600">Template: {activeTemplate?.name || 'Modern'}</p>
+      <div className="template-name mb-4 text-sm text-gray-500">
+        Template: {activeTemplate?.name || 'Modern'}
       </div>
-      <div className="resume-container">
-        <TemplateComponent data={resumeData} />
-      </div>
+      <TemplateComponent data={data} />
     </div>
   );
+}
+
+// Export all components
+export {
+  ModernTemplate,
+  ProfessionalTemplate,
+  MinimalTemplate,
+  ResumeTemplatesComponent
 };
