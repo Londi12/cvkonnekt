@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './utils/AuthContext';
 import HomePage from './components/HomePage';
+import AboutPage from './components/AboutPage';
+import ContactPage from './components/ContactPage';
 import { TemplatesPage } from './components/TemplatesPage';
 import BuilderPage from './components/BuilderPage';
 import SignInForm from './components/SignInForm';
@@ -14,10 +16,7 @@ import { getTemplateComponent } from './utils/templateUtils.jsx';
 
 function AppRoutes() {
   const { user, isAuthenticated } = useAuth();
-  const [currentPage, setCurrentPage] = useState(() => {
-    const hash = window.location.hash.replace('#', '');
-    return hash || 'home';
-  });
+  const [currentPage, setCurrentPage] = useState('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [donationModalOpen, setDonationModalOpen] = useState(false);
   const [activeTemplate, setActiveTemplate] = useState(() => {
@@ -39,13 +38,13 @@ function AppRoutes() {
   const location = useLocation();
 
   useEffect(() => {
-    const hash = location.hash.replace('#', '');
-    if (hash) {
-      setCurrentPage(hash);
-    } else {
-      setCurrentPage('home');
-    }
+    const path = location.pathname.slice(1) || 'home';
+    setCurrentPage(path);
   }, [location]);
+
+  const handleSave = async () => {
+    // implement save logic here
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -55,24 +54,46 @@ function AppRoutes() {
         setMobileMenuOpen={setMobileMenuOpen}
       />
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/templates" element={<TemplatesPage />} />
-        <Route path="/builder" element={
-          <BuilderPage 
-            activeTemplate={activeTemplate}
-            setActiveTemplate={setActiveTemplate}
-            activeSection={activeSection}
-            setActiveSection={setActiveSection}
-            resumeData={resumeData}
-            setResumeData={setResumeData}
-            formErrors={formErrors}
-            setFormErrors={setFormErrors}
-            saving={saving}
-            setSaving={setSaving}
-            lastSaved={lastSaved}
-            setLastSaved={setLastSaved}
-          />
-        } />
+        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route
+          path="/home"
+          element={
+            <HomePage
+              onGetStarted={() => navigate('/templates')}
+              onDonate={() => setDonationModalOpen(true)}
+            />
+          }
+        />
+        <Route
+          path="/templates"
+          element={
+            <TemplatesPage
+              onTemplateSelect={(template) => {
+                setActiveTemplate(template);
+                navigate('/builder');
+              }}
+            />
+          }
+        />
+        <Route
+          path="/builder"
+          element={
+            <BuilderPage
+              activeTemplate={activeTemplate}
+              activeSection={activeSection}
+              setActiveSection={setActiveSection}
+              formErrors={formErrors}
+              setFormErrors={setFormErrors}
+              saving={saving}
+              lastSaved={lastSaved}
+              resumeData={resumeData}
+              setResumeData={setResumeData}
+              onSave={handleSave}
+            />
+          }
+        />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
         <Route path="/signin" element={<SignInForm />} />
         <Route path="/signup" element={<SignUpForm />} />
       </Routes>

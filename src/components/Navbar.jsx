@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { ProfileIcon } from './ProfileIcon';
 
-export function Navbar({ page, navigate }) {
+export function Navbar({ isAuthenticated, mobileMenuOpen, setMobileMenuOpen }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Close mobile menu when page changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
-  }, [page]);
+  }, []);
+
+  const location = useLocation();
+  const currentPath = location.pathname.slice(1) || 'home';
 
   // Close mobile menu when clicking outside
   useEffect(() => {
@@ -21,8 +25,7 @@ export function Navbar({ page, navigate }) {
     return () => document.removeEventListener('click', handleClickOutside);
   }, [isMobileMenuOpen]);
 
-  const handleNavigation = (targetPage) => {
-    navigate(targetPage);
+  const handleNavigation = () => {
     setIsMobileMenuOpen(false);
   };
 
@@ -32,75 +35,75 @@ export function Navbar({ page, navigate }) {
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <a href="#home" onClick={() => handleNavigation('home')} className="text-2xl font-bold text-blue-600">
+              <Link to="/home" onClick={handleNavigation} className="text-2xl font-bold text-blue-600">
                 CVKonnekt
-              </a>
+              </Link>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              <a
-                href="#home"
-                onClick={() => handleNavigation('home')}
+              <Link
+                to="/home"
+                onClick={handleNavigation}
                 className={`${
-                  page === 'home'
+                  currentPath === 'home'
                     ? 'border-blue-500 text-gray-900'
                     : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
                 } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
               >
                 Home
-              </a>
-              <a
-                href="#templates"
-                onClick={() => handleNavigation('templates')}
+              </Link>
+              <Link
+                to="/templates"
+                onClick={handleNavigation}
                 className={`${
-                  page === 'templates'
+                  currentPath === 'templates'
                     ? 'border-blue-500 text-gray-900'
                     : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
                 } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
               >
                 Templates
-              </a>
-              <a
-                href="#about"
-                onClick={() => handleNavigation('about')}
+              </Link>
+              <Link
+                to="/about"
+                onClick={handleNavigation}
                 className={`${
-                  page === 'about'
+                  currentPath === 'about'
                     ? 'border-blue-500 text-gray-900'
                     : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
                 } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
               >
                 About
-              </a>
-              <a
-                href="#contact"
-                onClick={() => handleNavigation('contact')}
+              </Link>
+              <Link
+                to="/contact"
+                onClick={handleNavigation}
                 className={`${
-                  page === 'contact'
+                  currentPath === 'contact'
                     ? 'border-blue-500 text-gray-900'
                     : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
                 } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
               >
                 Contact
-              </a>
+              </Link>
             </div>
           </div>
           <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
-            <a
-              href="#support"
-              onClick={() => handleNavigation('support')}
+            <Link
+              to="/support"
+              onClick={handleNavigation}
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors duration-200"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
               Support Us
-            </a>
-            <a
-              href="#templates"
-              onClick={() => handleNavigation('templates')}
+            </Link>
+            <Link
+              to="/templates"
+              onClick={handleNavigation}
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
             >
               Create CV
-            </a>
+            </Link>
             <ProfileIcon />
           </div>
           <div className="-mr-2 flex items-center sm:hidden">
@@ -168,50 +171,50 @@ export function Navbar({ page, navigate }) {
             </button>
           </div>
           <div className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
-            <a
-              href="#home"
-              onClick={() => handleNavigation('home')}
+            <Link
+              to="/home"
+              onClick={handleNavigation}
               className={`${
-                page === 'home'
+                currentPath === 'home'
                   ? 'bg-blue-50 border-blue-500 text-blue-700'
                   : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
               } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
             >
               Home
-            </a>
-            <a
-              href="#templates"
-              onClick={() => handleNavigation('templates')}
+            </Link>
+            <Link
+              to="/templates"
+              onClick={handleNavigation}
               className={`${
-                page === 'templates'
+                currentPath === 'templates'
                   ? 'bg-blue-50 border-blue-500 text-blue-700'
                   : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
               } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
             >
               Templates
-            </a>
-            <a
-              href="#about"
-              onClick={() => handleNavigation('about')}
+            </Link>
+            <Link
+              to="/about"
+              onClick={handleNavigation}
               className={`${
-                page === 'about'
+                currentPath === 'about'
                   ? 'bg-blue-50 border-blue-500 text-blue-700'
                   : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
               } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
             >
               About
-            </a>
-            <a
-              href="#contact"
-              onClick={() => handleNavigation('contact')}
+            </Link>
+            <Link
+              to="/contact"
+              onClick={handleNavigation}
               className={`${
-                page === 'contact'
+                currentPath === 'contact'
                   ? 'bg-blue-50 border-blue-500 text-blue-700'
                   : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
               } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
             >
               Contact
-            </a>
+            </Link>
             <div className="pt-4 pb-3 border-t border-gray-200">
               <div className="flex items-center px-4">
                 <div className="flex-shrink-0">
@@ -219,20 +222,20 @@ export function Navbar({ page, navigate }) {
                 </div>
               </div>
               <div className="mt-3 space-y-1">
-                <a
-                  href="#support"
-                  onClick={() => handleNavigation('support')}
+                <Link
+                  to="/support"
+                  onClick={handleNavigation}
                   className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
                 >
                   Support Us
-                </a>
-                <a
-                  href="#templates"
-                  onClick={() => handleNavigation('templates')}
+                </Link>
+                <Link
+                  to="/templates"
+                  onClick={handleNavigation}
                   className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
                 >
                   Create CV
-                </a>
+                </Link>
               </div>
             </div>
           </div>
