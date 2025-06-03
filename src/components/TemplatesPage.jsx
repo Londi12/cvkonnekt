@@ -5,16 +5,6 @@ export function TemplatesPage() {
   const navigate = useNavigate();
   const templates = [
     {
-      id: 'classic',
-      name: 'Classic',
-      description: 'A timeless design with a clean layout, perfect for traditional industries.',
-      features: ['Clean layout', 'Professional look', 'Traditional formatting', 'Easy to read'],
-      preview: {
-        style: 'traditional',
-        accent: 'border-blue-700'
-      }
-    },
-    {
       id: 'modern',
       name: 'Modern',
       description: 'A contemporary design with bold elements, ideal for creative fields.',
@@ -35,13 +25,23 @@ export function TemplatesPage() {
       }
     },
     {
-      id: 'minimalist',
-      name: 'Minimalist',
+      id: 'minimal',
+      name: 'Minimal',
       description: 'A clean, simple design that puts content first with elegant spacing.',
       features: ['Spacious layout', 'Elegant design', 'Content-focused', 'Subtle styling'],
       preview: {
-        style: 'minimalist',
+        style: 'minimal',
         accent: 'border-gray-300'
+      }
+    },
+    {
+      id: 'classic',
+      name: 'Classic',
+      description: 'A timeless design with a clean layout, perfect for traditional industries.',
+      features: ['Clean layout', 'Professional look', 'Traditional formatting', 'Easy to read'],
+      preview: {
+        style: 'traditional',
+        accent: 'border-blue-700'
       }
     },
     {
@@ -68,13 +68,29 @@ export function TemplatesPage() {
 
   const handleTemplateSelect = (templateId) => {
     try {
+      const template = templates.find(t => t.id === templateId);
+      if (!template) {
+        console.error('Template not found:', templateId);
+        return;
+      }
+
       // Store the selected template in localStorage
-      localStorage.setItem('selectedTemplate', templateId);
+      const templateData = {
+        id: template.id,
+        name: template.name,
+        description: template.description,
+        features: template.features,
+        preview: template.preview
+      };
       
-      // Navigate to the builder page with template parameter
-      navigate('builder', { 
-        fromTemplate: true,
-        templateId
+      localStorage.setItem('activeTemplate', JSON.stringify(templateData));
+      
+      // Navigate to the builder page
+      navigate('/builder', { 
+        state: { 
+          fromTemplate: true,
+          template: templateData
+        }
       });
     } catch (error) {
       console.error('Error selecting template:', error);
@@ -213,7 +229,7 @@ const renderTemplatePreview = (template) => {
             </div>
           </div>
         );
-      case 'minimalist':
+      case 'minimal':
         return (
           <div className="bg-white p-4">
             <div className="mb-4">

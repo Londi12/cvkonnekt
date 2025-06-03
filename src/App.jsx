@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './utils/AuthContext';
 import HomePage from './components/HomePage';
-import AboutPage from './components/AboutPage';
-import ContactPage from './components/ContactPage';
+import { AboutPage } from './components/AboutPage';
+import { ContactPage } from './components/ContactPage';
 import { TemplatesPage } from './components/TemplatesPage';
 import BuilderPage from './components/BuilderPage';
 import SignInForm from './components/SignInForm';
@@ -31,7 +31,27 @@ function AppRoutes() {
   const [lastSaved, setLastSaved] = useState(null);
   const [resumeData, setResumeData] = useState(() => {
     const saved = localStorage.getItem('resumeData');
-    return saved ? JSON.parse(saved) : { personal: {}, education: [], experience: [], skills: [], projects: [] };
+    return saved ? JSON.parse(saved) : {
+      personalInfo: {
+        fullName: '',
+        jobTitle: '',
+        email: '',
+        phone: '',
+        address: '',
+        city: '',
+        province: '',
+        postalCode: '',
+        linkedin: '',
+        website: ''
+      },
+      professionalSummary: '',
+      workExperience: [],
+      education: [],
+      skills: [],
+      certifications: [],
+      languages: [],
+      references: []
+    };
   });
   const navigate = useNavigate();
   const location = useLocation();

@@ -1,8 +1,17 @@
 import React from 'react';
 
 // Modern Template Component
-export const ModernTemplate = ({ data }) => {
-  const { personalInfo, professionalSummary, workExperience, education, skills, certifications, languages, references } = data;
+export const ModernTemplate = ({ data = {} }) => {
+  const {
+    personalInfo = {},
+    professionalSummary = '',
+    workExperience = [],
+    education = [],
+    skills = [],
+    certifications = [],
+    languages = [],
+    references = []
+  } = data || {};
   
   const renderEducation = (education) => {
     if (!education || education.length === 0) return null;
@@ -12,16 +21,16 @@ export const ModernTemplate = ({ data }) => {
         <h2 className="text-xl font-bold mb-4">Education</h2>
         <div className="space-y-4">
           {education.map((edu, index) => (
-            <div key={edu.id} className="mb-4">
+            <div key={edu.id || index} className="mb-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold">{edu.qualification}</h3>
-                  <p className="text-gray-600">{edu.institution}</p>
-                  <p className="text-sm text-gray-500">{edu.location}</p>
+                  <h3 className="font-semibold">{edu.qualification || ''}</h3>
+                  <p className="text-gray-600">{edu.institution || ''}</p>
+                  <p className="text-sm text-gray-500">{edu.location || ''}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-gray-600">
-                    {edu.startDate} - {edu.endDate || 'Present'}
+                    {edu.startDate || ''} - {edu.endDate || 'Present'}
                   </p>
                 </div>
               </div>
@@ -43,18 +52,18 @@ export const ModernTemplate = ({ data }) => {
         <h2 className="text-xl font-bold mb-4">Certifications</h2>
         <div className="space-y-4">
           {certifications.map((cert, index) => (
-            <div key={cert.id} className="mb-4">
+            <div key={cert.id || index} className="mb-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold">{cert.name}</h3>
-                  <p className="text-gray-600">{cert.issuer}</p>
+                  <h3 className="font-semibold">{cert.name || ''}</h3>
+                  <p className="text-gray-600">{cert.issuer || ''}</p>
                   {cert.credentialId && (
                     <p className="text-sm text-gray-500">Credential ID: {cert.credentialId}</p>
                   )}
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-gray-600">
-                    {cert.date}
+                    {cert.date || ''}
                     {cert.expiryDate && ` - ${cert.expiryDate}`}
                   </p>
                 </div>
@@ -73,11 +82,18 @@ export const ModernTemplate = ({ data }) => {
     <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-8 shadow-md">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-extrabold text-purple-800">{personalInfo.fullName}</h1>
-        <p className="text-xl text-gray-600">{personalInfo.jobTitle}</p>
+        <h1 className="text-2xl font-extrabold text-purple-800">{personalInfo.fullName || 'Your Name'}</h1>
+        <p className="text-xl text-gray-600">{personalInfo.jobTitle || 'Your Job Title'}</p>
         <div className="mt-2 text-gray-600">
-          <p>{personalInfo.email} • {personalInfo.phone}</p>
-          <p>{personalInfo.address}, {personalInfo.city}, {personalInfo.province} {personalInfo.postalCode}</p>
+          <p>{personalInfo.email || ''} {personalInfo.phone ? `• ${personalInfo.phone}` : ''}</p>
+          <p>
+            {[
+              personalInfo.address,
+              personalInfo.city,
+              personalInfo.province,
+              personalInfo.postalCode
+            ].filter(Boolean).join(', ')}
+          </p>
           {personalInfo.linkedin && (
             <p>LinkedIn: {personalInfo.linkedin}</p>
           )}
@@ -101,16 +117,16 @@ export const ModernTemplate = ({ data }) => {
           <h2 className="text-xl font-bold text-purple-700 mb-4">Work Experience</h2>
           <div className="space-y-6">
             {workExperience.map((exp, index) => (
-              <div key={exp.id} className="mb-4">
+              <div key={exp.id || index} className="mb-4">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-semibold">{exp.jobTitle}</h3>
-                    <p className="text-gray-600">{exp.employer}</p>
-                    <p className="text-sm text-gray-500">{exp.city}</p>
+                    <h3 className="font-semibold">{exp.jobTitle || ''}</h3>
+                    <p className="text-gray-600">{exp.employer || ''}</p>
+                    <p className="text-sm text-gray-500">{exp.city || ''}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-gray-600">
-                      {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
+                      {exp.startDate || ''} - {exp.current ? 'Present' : (exp.endDate || '')}
                     </p>
                   </div>
                 </div>
@@ -136,10 +152,10 @@ export const ModernTemplate = ({ data }) => {
           <div className="flex flex-wrap gap-2">
             {skills.map((skill, index) => (
               <span
-                key={skill.id}
+                key={skill.id || index}
                 className="px-3 py-1 bg-white bg-opacity-70 rounded-full text-gray-700"
               >
-                {skill.skill} {skill.level && `(${skill.level})`}
+                {skill.skill || ''} {skill.level && `(${skill.level})`}
               </span>
             ))}
           </div>
@@ -153,10 +169,10 @@ export const ModernTemplate = ({ data }) => {
           <div className="flex flex-wrap gap-2">
             {languages.map((lang, index) => (
               <span
-                key={lang.id}
+                key={lang.id || index}
                 className="px-3 py-1 bg-gray-100 rounded-full text-gray-700"
               >
-                {lang.language} ({lang.proficiency})
+                {lang.language || ''} {lang.proficiency && `(${lang.proficiency})`}
               </span>
             ))}
           </div>
@@ -169,10 +185,14 @@ export const ModernTemplate = ({ data }) => {
           <h2 className="text-xl font-bold mb-4">References</h2>
           <div className="space-y-4">
             {references.map((ref, index) => (
-              <div key={ref.id} className="mb-4">
-                <h3 className="font-semibold">{ref.name}</h3>
-                <p className="text-gray-600">{ref.position} at {ref.company}</p>
-                <p className="text-sm text-gray-500">{ref.email} • {ref.phone}</p>
+              <div key={ref.id || index} className="mb-4">
+                <h3 className="font-semibold">{ref.name || ''}</h3>
+                <p className="text-gray-600">
+                  {ref.position || ''} {ref.company ? `at ${ref.company}` : ''}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {ref.email || ''} {ref.phone ? `• ${ref.phone}` : ''}
+                </p>
               </div>
             ))}
           </div>
@@ -381,7 +401,24 @@ export const MinimalTemplate = ({ data }) => {
 
 // Create and export all templates as an object
 export const ResumeTemplates = {
-  Modern: ModernTemplate,
-  Professional: ProfessionalTemplate,
-  Minimal: MinimalTemplate
+  modern: ModernTemplate,
+  professional: ProfessionalTemplate,
+  minimal: MinimalTemplate
+};
+
+// Main ResumeTemplates component
+export const ResumeTemplatesComponent = ({ activeTemplate, resumeData }) => {
+  const TemplateComponent = ResumeTemplates[activeTemplate.id.toLowerCase()] || ModernTemplate;
+  
+  return (
+    <div className="resume-preview">
+      <div className="mb-4">
+        <h2 className="text-lg font-semibold text-gray-800">Preview</h2>
+        <p className="text-sm text-gray-600">Template: {activeTemplate.name}</p>
+      </div>
+      <div className="resume-container">
+        <TemplateComponent data={resumeData} />
+      </div>
+    </div>
+  );
 };

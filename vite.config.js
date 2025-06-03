@@ -12,6 +12,13 @@ const __dirname = dirname(__filename);
 export default defineConfig({
   base: '/',
   plugins: [react()],
+  server: {
+    port: 3000,
+    strictPort: false,
+    open: true,
+    host: true,
+    historyApiFallback: true
+  },
   css: {
     postcss: {
       plugins: [
@@ -19,14 +26,6 @@ export default defineConfig({
         autoprefixer(),
       ],
     },
-  },
-  server: {
-    port: 8080,
-    strictPort: true,
-    host: true,
-    hmr: {
-      overlay: true
-    }
   },
   build: {
     outDir: 'dist',

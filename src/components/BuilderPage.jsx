@@ -1,6 +1,6 @@
 import React from 'react';
 import { ResumeForm } from './ResumeForm';
-import { ResumeTemplates } from './ResumeTemplates';
+import { ResumeTemplatesComponent } from './ResumeTemplates';
 import BuilderDonationBanner from './BuilderDonationBanner';
 
 const BuilderPage = ({
@@ -40,9 +40,8 @@ const BuilderPage = ({
           
           {/* Right side - Preview */}
           <div className="bg-white rounded-lg shadow-lg p-6">
-            <ResumeTemplates
+            <ResumeTemplatesComponent
               activeTemplate={activeTemplate}
-              setActiveTemplate={setActiveTemplate}
               resumeData={resumeData}
             />
           </div>

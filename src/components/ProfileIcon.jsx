@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../utils/AuthContext';
 
 export function ProfileIcon() {
   const { user, signOut, isAuthenticated } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -17,9 +19,10 @@ export function ProfileIcon() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleSignOut = () => {
-    signOut();
+  const handleSignOut = async () => {
+    await signOut();
     setIsOpen(false);
+    navigate('/');
   };
 
   return (
@@ -69,20 +72,22 @@ export function ProfileIcon() {
                 <div className="px-4 py-2 text-sm text-gray-700 border-b">
                   Signed in as <span className="font-medium">{user.name}</span>
                 </div>
-                <a
-                  href="#dashboard"
+                <Link
+                  to="/dashboard"
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   role="menuitem"
+                  onClick={() => setIsOpen(false)}
                 >
                   Dashboard
-                </a>
-                <a
-                  href="#profile"
+                </Link>
+                <Link
+                  to="/profile"
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   role="menuitem"
+                  onClick={() => setIsOpen(false)}
                 >
                   Profile Settings
-                </a>
+                </Link>
                 <button
                   onClick={handleSignOut}
                   className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -93,20 +98,22 @@ export function ProfileIcon() {
               </>
             ) : (
               <>
-                <a
-                  href="#signin"
+                <Link
+                  to="/signin"
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   role="menuitem"
+                  onClick={() => setIsOpen(false)}
                 >
                   Sign In
-                </a>
-                <a
-                  href="#signup"
+                </Link>
+                <Link
+                  to="/signup"
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   role="menuitem"
+                  onClick={() => setIsOpen(false)}
                 >
                   Sign Up
-                </a>
+                </Link>
               </>
             )}
           </div>
@@ -114,4 +121,4 @@ export function ProfileIcon() {
       )}
     </div>
   );
-} 
+}

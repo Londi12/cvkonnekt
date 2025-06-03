@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../utils/AuthContext';
 
 export function DashboardPage() {
@@ -15,20 +16,20 @@ export function DashboardPage() {
             <div className="bg-blue-50 p-4 rounded-lg">
               <h3 className="text-lg font-medium text-blue-800 mb-2">Recent Resumes</h3>
               <p className="text-gray-600">You haven't created any resumes yet.</p>
-              <a href="#templates" className="mt-4 inline-block text-blue-600 hover:text-blue-800">
+              <Link to="/templates" className="mt-4 inline-block text-blue-600 hover:text-blue-800">
                 Create your first resume →
-              </a>
+              </Link>
             </div>
             
             <div className="bg-green-50 p-4 rounded-lg">
               <h3 className="text-lg font-medium text-green-800 mb-2">Quick Actions</h3>
               <div className="space-y-2">
-                <a href="#templates" className="block text-green-600 hover:text-green-800">
+                <Link to="/templates" className="block text-green-600 hover:text-green-800">
                   Create New Resume
-                </a>
-                <a href="#profile" className="block text-green-600 hover:text-green-800">
+                </Link>
+                <Link to="/profile" className="block text-green-600 hover:text-green-800">
                   Update Profile
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -36,4 +37,4 @@ export function DashboardPage() {
       </div>
     </div>
   );
-} 
+}

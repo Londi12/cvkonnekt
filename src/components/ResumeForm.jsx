@@ -1,14 +1,25 @@
 import React from 'react';
 
-export function ResumeForm({ activeSection, resumeData, setResumeData, formErrors }) {
+export function ResumeForm({ activeSection, setActiveSection, resumeData, setResumeData, formErrors }) {
   const handleInputChange = (section, field, value) => {
-    setResumeData(prev => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: value
+    setResumeData(prev => {
+      if (section === 'personalInfo') {
+        return {
+          ...prev,
+          personalInfo: {
+            ...prev.personalInfo,
+            [field]: value
+          }
+        };
       }
-    }));
+      return {
+        ...prev,
+        [section]: {
+          ...prev[section],
+          [field]: value
+        }
+      };
+    });
   };
 
   const handleArrayItemChange = (section, index, field, value) => {
@@ -80,110 +91,105 @@ export function ResumeForm({ activeSection, resumeData, setResumeData, formError
     }
   };
 
-  const renderPersonalInfo = () => (
-    <div className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Full Name</label>
-        <input
-          type="text"
-          value={resumeData.personalInfo.fullName}
-          onChange={(e) => handleInputChange('personalInfo', 'fullName', e.target.value)}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        />
-        {formErrors.fullName && <p className="mt-1 text-sm text-red-600">{formErrors.fullName}</p>}
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Job Title</label>
-        <input
-          type="text"
-          value={resumeData.personalInfo.jobTitle}
-          onChange={(e) => handleInputChange('personalInfo', 'jobTitle', e.target.value)}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        />
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Email</label>
-          <input
-            type="email"
-            value={resumeData.personalInfo.email}
-            onChange={(e) => handleInputChange('personalInfo', 'email', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          />
-          {formErrors.email && <p className="mt-1 text-sm text-red-600">{formErrors.email}</p>}
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Phone</label>
-          <input
-            type="tel"
-            value={resumeData.personalInfo.phone}
-            onChange={(e) => handleInputChange('personalInfo', 'phone', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          />
-        </div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Address</label>
-          <input
-            type="text"
-            value={resumeData.personalInfo.address}
-            onChange={(e) => handleInputChange('personalInfo', 'address', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">City</label>
-          <input
-            type="text"
-            value={resumeData.personalInfo.city}
-            onChange={(e) => handleInputChange('personalInfo', 'city', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          />
-        </div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Province</label>
-          <input
-            type="text"
-            value={resumeData.personalInfo.province}
-            onChange={(e) => handleInputChange('personalInfo', 'province', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Postal Code</label>
-          <input
-            type="text"
-            value={resumeData.personalInfo.postalCode}
-            onChange={(e) => handleInputChange('personalInfo', 'postalCode', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          />
-        </div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">LinkedIn</label>
-          <input
-            type="url"
-            value={resumeData.personalInfo.linkedin}
-            onChange={(e) => handleInputChange('personalInfo', 'linkedin', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Website</label>
-          <input
-            type="url"
-            value={resumeData.personalInfo.website}
-            onChange={(e) => handleInputChange('personalInfo', 'website', e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          />
+  const renderPersonalInfo = () => {
+    return (
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Personal Information</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Full Name</label>
+            <input
+              type="text"
+              value={resumeData.personalInfo?.fullName || ''}
+              onChange={(e) => handleInputChange('personalInfo', 'fullName', e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Job Title</label>
+            <input
+              type="text"
+              value={resumeData.personalInfo?.jobTitle || ''}
+              onChange={(e) => handleInputChange('personalInfo', 'jobTitle', e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <input
+              type="email"
+              value={resumeData.personalInfo?.email || ''}
+              onChange={(e) => handleInputChange('personalInfo', 'email', e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Phone</label>
+            <input
+              type="tel"
+              value={resumeData.personalInfo?.phone || ''}
+              onChange={(e) => handleInputChange('personalInfo', 'phone', e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Address</label>
+            <input
+              type="text"
+              value={resumeData.personalInfo?.address || ''}
+              onChange={(e) => handleInputChange('personalInfo', 'address', e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">City</label>
+            <input
+              type="text"
+              value={resumeData.personalInfo?.city || ''}
+              onChange={(e) => handleInputChange('personalInfo', 'city', e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Province</label>
+            <input
+              type="text"
+              value={resumeData.personalInfo?.province || ''}
+              onChange={(e) => handleInputChange('personalInfo', 'province', e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Postal Code</label>
+            <input
+              type="text"
+              value={resumeData.personalInfo?.postalCode || ''}
+              onChange={(e) => handleInputChange('personalInfo', 'postalCode', e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">LinkedIn</label>
+            <input
+              type="url"
+              value={resumeData.personalInfo?.linkedin || ''}
+              onChange={(e) => handleInputChange('personalInfo', 'linkedin', e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Website</label>
+            <input
+              type="url"
+              value={resumeData.personalInfo?.website || ''}
+              onChange={(e) => handleInputChange('personalInfo', 'website', e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderProfessionalSummary = () => (
     <div>
@@ -640,6 +646,17 @@ export function ResumeForm({ activeSection, resumeData, setResumeData, formError
     </div>
   );
 
+  const sections = [
+    { id: 'personal', label: 'Personal Info' },
+    { id: 'summary', label: 'Summary' },
+    { id: 'experience', label: 'Experience' },
+    { id: 'education', label: 'Education' },
+    { id: 'certifications', label: 'Certifications' },
+    { id: 'skills', label: 'Skills' },
+    { id: 'languages', label: 'Languages' },
+    { id: 'references', label: 'References' }
+  ];
+
   const renderSection = () => {
     switch (activeSection) {
       case 'personal':
@@ -665,7 +682,30 @@ export function ResumeForm({ activeSection, resumeData, setResumeData, formError
 
   return (
     <div className="space-y-6">
-      {renderSection()}
+      {/* Section Navigation */}
+      <div className="border-b border-gray-200">
+        <nav className="-mb-px flex space-x-8 overflow-x-auto">
+          {sections.map((section) => (
+            <button
+              key={section.id}
+              onClick={() => setActiveSection(section.id)}
+              className={`
+                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm
+                ${activeSection === section.id
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
+              `}
+            >
+              {section.label}
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      {/* Section Content */}
+      <div className="mt-6">
+        {renderSection()}
+      </div>
     </div>
   );
 } 

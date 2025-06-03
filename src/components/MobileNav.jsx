@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSwipeable } from 'react-swipeable';
+import { Link } from 'react-router-dom';
 
 const MobileNav = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -91,40 +92,40 @@ const MobileNav = () => {
           <nav className="mt-16 px-4">
             <ul className="space-y-4">
               <li>
-                <a
-                  href="/"
+                <Link
+                  to="/"
                   className="block py-2 text-gray-600 hover:text-gray-900"
                   onClick={() => setIsOpen(false)}
                 >
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/templates"
+                <Link
+                  to="/templates"
                   className="block py-2 text-gray-600 hover:text-gray-900"
                   onClick={() => setIsOpen(false)}
                 >
                   Templates
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/tips"
+                <Link
+                  to="/tips"
                   className="block py-2 text-gray-600 hover:text-gray-900"
                   onClick={() => setIsOpen(false)}
                 >
                   Tips
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/about"
+                <Link
+                  to="/about"
                   className="block py-2 text-gray-600 hover:text-gray-900"
                   onClick={() => setIsOpen(false)}
                 >
                   About
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>
@@ -134,4 +135,4 @@ const MobileNav = () => {
   );
 };
 
-export default MobileNav; 
+export default MobileNav;
