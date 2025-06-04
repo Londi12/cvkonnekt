@@ -6,6 +6,8 @@ import { AboutPage } from './components/AboutPage';
 import { ContactPage } from './components/ContactPage';
 import { TemplatesPage } from './components/TemplatesPage';
 import BuilderPage from './components/BuilderPage';
+import { CoverLetterTemplatesPage } from './components/CoverLetterTemplatesPage';
+import CoverLetterBuilder from './components/CoverLetterBuilder';
 import SignInForm from './components/SignInForm';
 import { SignUpForm } from './components/SignUpForm';
 import { Navbar } from './components/Navbar';
@@ -99,6 +101,18 @@ function AppRoutes() {
                   navigate('/builder');
                 }}
               />
+            }
+          />
+          <Route
+            path="/cover-letters"
+            element={
+              <CoverLetterTemplatesPage />
+            }
+          />
+          <Route
+            path="/cover-letter-builder/:templateId"
+            element={
+              <CoverLetterBuilder />
             }
           />
           <Route

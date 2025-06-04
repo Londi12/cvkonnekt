@@ -9,7 +9,9 @@ import {
   ArrowRightIcon, 
   ArrowDownTrayIcon,
   Bars3Icon,
-  XMarkIcon
+  XMarkIcon,
+  PencilIcon,
+  EyeIcon
 } from '@heroicons/react/24/outline';
 
 // Custom hook to detect mobile viewport
@@ -314,7 +316,66 @@ const BuilderPage = ({
         </div>
       </div>
 
-      {/* Sticky Mobile Action Bar */}
+      {/* Sticky Bottom Action Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg p-3 z-20">
+        <div className="flex justify-between items-center max-w-7xl mx-auto">
+          <button
+            onClick={handlePrevious}
+            disabled={!hasPrevious}
+            className={`flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              hasPrevious
+                ? 'text-blue-600 hover:bg-blue-50'
+                : 'text-gray-400 cursor-not-allowed'
+            }`}
+          >
+            <ArrowLeftIcon className="h-5 w-5" />
+            <span className="ml-1 hidden sm:inline">Previous</span>
+          </button>
+          
+          <div className="flex space-x-2">
+            <button
+              onClick={togglePreview}
+              className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 hidden lg:flex items-center"
+              aria-label={showPreview ? 'Show Form' : 'Show Preview'}
+            >
+              {showPreview ? (
+                <>
+                  <span>Edit</span>
+                  <PencilIcon className="h-4 w-4 ml-1" />
+                </>
+              ) : (
+                <>
+                  <span>Preview</span>
+                  <EyeIcon className="h-4 w-4 ml-1" />
+                </>
+              )}
+            </button>
+            
+            <button
+              onClick={downloadPDF}
+              className="flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+            >
+              <ArrowDownTrayIcon className="h-5 w-5" />
+              <span className="ml-1 hidden sm:inline">Download PDF</span>
+            </button>
+          </div>
+          
+          <button
+            onClick={handleNext}
+            disabled={!hasNext}
+            className={`flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              hasNext
+                ? 'text-blue-600 hover:bg-blue-50'
+                : 'text-gray-400 cursor-not-allowed'
+            }`}
+          >
+            <span className="mr-1 hidden sm:inline">Next</span>
+            <ArrowRightIcon className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Action Bar */}
       {isMobile && (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg p-3 z-20">
           <div className="flex justify-between items-center max-w-7xl mx-auto">
