@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { ResumeForm } from './ResumeForm';
 import { ResumeTemplatesComponent } from './ResumeTemplates';
-import BuilderDonationBanner from './BuilderDonationBanner';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { 

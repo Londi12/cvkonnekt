@@ -11,14 +11,13 @@ import CoverLetterBuilder from './components/CoverLetterBuilder';
 import SignInForm from './components/SignInForm';
 import { SignUpForm } from './components/SignUpForm';
 import { Navbar } from './components/Navbar';
-import { DonationModal } from './components/DonationModal';
+import PricingPage from './pages/PricingPage';
 import { getResumes } from './lib/supabase';
 import { getTemplateComponent } from './utils/templateUtils.jsx';
 
 function AppRoutes() {
   const { user, isAuthenticated } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [donationModalOpen, setDonationModalOpen] = useState(false);
   const [activeTemplate, setActiveTemplate] = useState(() => {
     const saved = localStorage.getItem('activeTemplate');
     return saved ? JSON.parse(saved) : { id: 'modern', name: 'Modern' };
@@ -134,14 +133,11 @@ function AppRoutes() {
           />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
           <Route path="/signin" element={<SignInForm />} />
           <Route path="/signup" element={<SignUpForm />} />
         </Routes>
       </main>
-      <DonationModal 
-        open={donationModalOpen}
-        setOpen={setDonationModalOpen}
-      />
     </div>
   );
 }

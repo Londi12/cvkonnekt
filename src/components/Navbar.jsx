@@ -61,7 +61,18 @@ export function Navbar({ isAuthenticated, mobileMenuOpen, setMobileMenuOpen }) {
                     : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
                 } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
               >
-                Templates
+                CV Templates
+              </Link>
+              <Link
+                to="/cover-letters"
+                onClick={handleNavigation}
+                className={`${
+                  currentPath === 'cover-letters'
+                    ? 'border-blue-500 text-gray-900'
+                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+              >
+                Cover Letter Templates
               </Link>
               <Link
                 to="/about"
@@ -86,29 +97,19 @@ export function Navbar({ isAuthenticated, mobileMenuOpen, setMobileMenuOpen }) {
                 Contact
               </Link>
               <Link
-                to="/cover-letters"
+                to="/pricing"
                 onClick={handleNavigation}
                 className={`${
-                  currentPath === 'cover-letters'
+                  currentPath === 'pricing'
                     ? 'border-blue-500 text-gray-900'
                     : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
                 } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
               >
-                Cover Letters
+                Pricing
               </Link>
             </div>
           </div>
           <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
-            <Link
-              to="/support"
-              onClick={handleNavigation}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors duration-200"
-            >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-              Support Us
-            </Link>
             <Link
               to="/templates"
               onClick={handleNavigation}
@@ -190,7 +191,18 @@ export function Navbar({ isAuthenticated, mobileMenuOpen, setMobileMenuOpen }) {
                   : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
               } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
             >
-              Templates
+              CV Templates
+            </Link>
+            <Link
+              to="/cover-letters"
+              onClick={handleNavigation}
+              className={`${
+                currentPath === 'cover-letters'
+                  ? 'bg-blue-50 border-blue-500 text-blue-700'
+                  : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
+              } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
+            >
+              Cover Letter Templates
             </Link>
             <Link
               to="/about"
@@ -213,6 +225,17 @@ export function Navbar({ isAuthenticated, mobileMenuOpen, setMobileMenuOpen }) {
               } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
             >
               Contact
+            </Link>
+            <Link
+              to="/pricing"
+              onClick={handleNavigation}
+              className={`${
+                currentPath === 'pricing'
+                  ? 'bg-blue-50 border-blue-500 text-blue-700'
+                  : 'border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
+              } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
+            >
+              Pricing
             </Link>
           </div>
         </div>

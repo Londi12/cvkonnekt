@@ -106,7 +106,7 @@ const MobileNav = () => {
                   className="block py-2 text-gray-600 hover:text-gray-900"
                   onClick={() => setIsOpen(false)}
                 >
-                  Templates
+                  CV Templates
                 </Link>
               </li>
               <li>

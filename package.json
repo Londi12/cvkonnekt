@@ -28,7 +28,9 @@
   "dependencies": {
     "@headlessui/react": "^1.7.18",
     "@heroicons/react": "2.2.0",
+    "@stripe/stripe-js": "^2.4.0",
     "@supabase/supabase-js": "2.49.9",
+    "@yoco/popup-web": "^1.0.0",
     "date-fns": "4.1.0",
     "html2canvas": "1.4.1",
     "html2pdf.js": "0.10.3",
