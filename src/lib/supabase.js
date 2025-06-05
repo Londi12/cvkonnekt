@@ -1,15 +1,98 @@
 import { createClient } from '@supabase/supabase-js';
 
+// Debug environment variables
+console.log('Environment Mode:', import.meta.env.MODE);
+console.log('VITE_SUPABASE_URL:', import.meta.env.VITE_SUPABASE_URL ? 'Set' : 'Not set');
+console.log('VITE_SUPABASE_ANON_KEY:', import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Set' : 'Not set');
+
+// Get environment variables - Vite specific
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const siteUrl = import.meta.env.VITE_SITE_URL || window.location.origin;
+const redirectTo = import.meta.env.VITE_REDIRECT_TO || `${siteUrl}/auth/callback`;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('❌ Supabase URL or Anon Key is missing. Please check your .env file');
+  console.error('Make sure you have both VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY set');
+}
+
+console.log('🔌 Supabase URL:', supabaseUrl);
+console.log('🌐 Site URL:', siteUrl);
+console.log('🔄 Redirect To:', redirectTo);
+
 // Create a single supabase client for interacting with your database
 export const getSupabase = () => {
-  const isTest = process.env.MODE === 'test';
-  if (isTest) {
+  // For testing
+  if (import.meta.env.MODE === 'test') {
     return getMockSupabaseClient();
   }
-  const supabaseUrl = process.env.VITE_SUPABASE_URL;
-  const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
-  return createClient(supabaseUrl, supabaseAnonKey);
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Missing Supabase URL or Anon Key');
+  }
+  
+  try {
+    // Get any existing session from localStorage
+    const storageKey = 'cvkonnekt-supabase-token';
+    const sessionStr = localStorage.getItem(storageKey);
+    const session = sessionStr ? JSON.parse(sessionStr) : null;
+    
+    if (session) {
+      console.log('Found existing session for user:', session.user?.email);
+    } else {
+      console.log('No existing session found');
+    }
+
+    // Create and return the Supabase client
+    const client = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true,
+        storage: window.localStorage,
+        storageKey: storageKey,
+        flowType: 'pkce',
+        debug: import.meta.env.DEV,
+        // Production settings
+        cookieOptions: {
+          name: 'cvkonnekt-auth',
+          lifetime: 60 * 60 * 24 * 7, // 7 days
+          domain: import.meta.env.PROD ? '.cvkonnekt.com' : '',
+          path: '/',
+          sameSite: 'lax'
+        },
+        // Enable PKCE (Proof Key for Code Exchange) for better security
+        auth: {
+          autoConfirmEmail: false, // Disable in production
+          detectSessionInUrl: true,
+          persistSession: true,
+          autoRefreshToken: true,
+          storage: window.localStorage,
+          storageKey: 'cvkonnekt-supabase-token',
+          redirectTo: redirectTo,
+          flowType: 'pkce'
+        }
+      },
+      // Global headers for all requests
+      global: {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-Custom-Domain': 'cvkonnekt.com'
+        }
+      }
+    });
+    
+    // Debug
+    console.log('Supabase client initialized successfully');
+    return client;
+  } catch (error) {
+    console.error('❌ Failed to initialize Supabase client:', error);
+    throw error;
+  }
 };
+
+// Export a default client instance for easier imports
+export const supabase = getSupabase();
 
 // Mock users database
 const mockUsers = {
@@ -172,12 +255,46 @@ export const saveResume = async (resume) => {
 };
 
 export const getResumes = async () => {
-  const supabase = getSupabase();
-  const { data, error } = await supabase
-    .from('resumes')
-    .select();
-  if (error) throw error;
-  return data;
+  try {
+    console.log('Fetching resumes from Supabase...');
+    
+    // First, get the current session
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) {
+      console.error('Session error:', sessionError);
+      throw sessionError;
+    }
+    
+    if (!session) {
+      console.warn('No active session found');
+      throw new Error('Not authenticated');
+    }
+    
+    console.log('User session:', session.user?.email);
+    
+    // Now fetch resumes with the active session
+    const { data, error } = await supabase
+      .from('resumes')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Supabase query error:', error);
+      throw error;
+    }
+    
+    console.log(`Found ${data?.length || 0} resumes`);
+    return data || [];
+  } catch (error) {
+    console.error('Failed to fetch resumes:', {
+      message: error.message,
+      code: error.code,
+      status: error.status,
+      details: error.details
+    });
+    throw error;
+  }
 };
 
 export const updateResume = async (id, resume) => {

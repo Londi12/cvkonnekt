@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom'
+import { Routes, Route, useNavigate, useLocation, Navigate, Outlet } from 'react-router-dom';
 import { AuthProvider, useAuth } from './utils/AuthContext';
 import HomePage from './components/HomePage';
-import { AboutPage } from './components/AboutPage';
 import { ContactPage } from './components/ContactPage';
 import { TemplatesPage } from './components/TemplatesPage';
 import BuilderPage from './components/BuilderPage';
@@ -12,26 +11,33 @@ import SignInForm from './components/SignInForm';
 import { SignUpForm } from './components/SignUpForm';
 import { Navbar } from './components/Navbar';
 import PricingPage from './pages/PricingPage';
+import SubscribePage from './pages/SubscribePage';
+import AuthCallback from './pages/AuthCallback';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import Dashboard from './pages/Dashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 import { getResumes } from './lib/supabase';
 import { getTemplateComponent } from './utils/templateUtils.jsx';
 
 function AppRoutes() {
   const { user, isAuthenticated } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeTemplate, setActiveTemplate] = useState(() => {
-    const saved = localStorage.getItem('activeTemplate');
-    return saved ? JSON.parse(saved) : { id: 'modern', name: 'Modern' };
-  });
-  const [activeSection, setActiveSection] = useState(() => {
-    const saved = localStorage.getItem('activeSection');
-    return saved ? JSON.parse(saved) : 'personal';
-  });
+  const [activeTemplate, setActiveTemplate] = useState({ id: 'modern', name: 'Modern' });
+  const [activeSection, setActiveSection] = useState('personal');
   const [formErrors, setFormErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState(null);
-  const [resumeData, setResumeData] = useState(() => {
-    const saved = localStorage.getItem('resumeData');
-    return saved ? JSON.parse(saved) : { personal: {}, education: [], experience: [], skills: [], projects: [] };
+  const [resumeData, setResumeData] = useState({
+    personalInfo: {},
+    professionalSummary: '',
+    workExperience: [],
+    education: [],
+    certifications: [],
+    skills: [],
+    languages: [],
+    references: [],
+    projects: []
   });
   const navigate = useNavigate();
   const location = useLocation();
@@ -43,34 +49,47 @@ function AppRoutes() {
   // Fetch resumes when authenticated
   useEffect(() => {
     const fetchResumes = async () => {
-      if (isAuthenticated) {
-        try {
-          const resumes = await getResumes();
-          if (resumes && resumes.length > 0) {
-            const latest = resumes[0];
-            setResumeData(latest.data);
-            localStorage.setItem('resumeData', JSON.stringify(latest.data));
-          }
-        } catch (err) {
-          console.error("Error fetching resume data:", err);
+      if (!isAuthenticated) return;
+      
+      try {
+        console.log('Fetching resumes for authenticated user...');
+        const resumes = await getResumes();
+        console.log('Fetched resumes:', resumes);
+        
+        if (resumes && resumes.length > 0) {
+          const latest = resumes[0];
+          console.log('Setting resume data:', latest);
+          setResumeData(latest.data);
+        } else {
+          console.log('No resumes found for user');
+          // Reset to default empty state if no resumes found
+          setResumeData({
+            personal: {},
+            education: [],
+            experience: [],
+            skills: [],
+            projects: []
+          });
         }
+      } catch (err) {
+        console.error("Error fetching resume data:", err);
+        // Reset to default empty state on error
+        setResumeData({
+          personal: {},
+          education: [],
+          experience: [],
+          skills: [],
+          projects: []
+        });
       }
     };
-    fetchResumes();
+    
+    // Add a small delay to ensure auth state is fully initialized
+    const timer = setTimeout(fetchResumes, 300);
+    return () => clearTimeout(timer);
   }, [isAuthenticated]);
 
-  // Save state to localStorage
-  useEffect(() => {
-    localStorage.setItem('activeTemplate', JSON.stringify(activeTemplate));
-  }, [activeTemplate]);
-
-  useEffect(() => {
-    localStorage.setItem('activeSection', JSON.stringify(activeSection));
-  }, [activeSection]);
-
-  useEffect(() => {
-    localStorage.setItem('resumeData', JSON.stringify(resumeData));
-  }, [resumeData]);
+  // State is now managed in-memory only
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
@@ -82,6 +101,33 @@ function AppRoutes() {
       <main className="flex-1 pt-16 relative z-10">
         <Routes>
           <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route
+            path="/signin"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/dashboard" state={{ from: location }} replace />
+              ) : (
+                <SignInForm onSuccess={() => {
+                  const from = location.state?.from?.pathname || '/dashboard';
+                  navigate(from, { replace: true });
+                }} />
+              )
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/dashboard" state={{ from: location }} replace />
+              ) : (
+                <SignUpForm onSuccess={() => {
+                  const from = location.state?.from?.pathname || '/dashboard';
+                  navigate(from, { replace: true });
+                }} />
+              )
+            }
+          />
           <Route
             path="/home"
             element={
@@ -117,25 +163,39 @@ function AppRoutes() {
           <Route
             path="/builder"
             element={
-              <BuilderPage
-                activeTemplate={activeTemplate}
-                activeSection={activeSection}
-                setActiveSection={setActiveSection}
-                formErrors={formErrors}
-                setFormErrors={setFormErrors}
-                saving={saving}
-                lastSaved={lastSaved}
-                resumeData={resumeData}
-                setResumeData={setResumeData}
-                onSave={handleSave}
-              />
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <BuilderPage
+                  activeTemplate={activeTemplate}
+                  setActiveTemplate={setActiveTemplate}
+                  resumeData={resumeData}
+                  setResumeData={setResumeData}
+                  activeSection={activeSection}
+                  setActiveSection={setActiveSection}
+                  formErrors={formErrors}
+                  onSave={handleSave}
+                  saving={saving}
+                  lastSaved={lastSaved}
+                />
+              </ProtectedRoute>
             }
           />
-          <Route path="/about" element={<AboutPage />} />
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/pricing" element={<PricingPage />} />
-          <Route path="/signin" element={<SignInForm />} />
-          <Route path="/signup" element={<SignUpForm />} />
+          <Route path="/subscribe/:planId" element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <SubscribePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Routes>
       </main>
     </div>

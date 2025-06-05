@@ -90,6 +90,9 @@ const BuilderPage = ({
   const currentSectionIndex = sections.indexOf(activeSection);
   const hasNext = currentSectionIndex < sections.length - 1;
   const hasPrevious = currentSectionIndex > 0;
+  const isMobile = useIsMobile();
+  const [showPreview, setShowPreview] = useState(!isMobile);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleNext = () => {
     if (hasNext) {
@@ -171,30 +174,18 @@ const BuilderPage = ({
     }
   };
 
-  const isMobile = useIsMobile();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showPreview, setShowPreview] = useState(!isMobile);
-
-  // Toggle between form and preview on mobile
-  const togglePreview = () => {
+  const toggleEdit = () => {
     setShowPreview(!showPreview);
-    if (mobileMenuOpen) setMobileMenuOpen(false);
   };
 
-  // Handle step navigation from stepper
-  const handleStepClick = (step) => {
-    setActiveSection(step);
-    if (isMobile) {
-      setShowPreview(false);
-    }
+  const handleSave = () => {
+    setIsSaving(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsSaving(false);
+      setLastSaved(new Date().toLocaleTimeString());
+    }, 1000);
   };
-
-  // Auto-close mobile menu when section changes
-  useEffect(() => {
-    if (mobileMenuOpen) {
-      setMobileMenuOpen(false);
-    }
-  }, [activeSection]);
 
   // Scroll to top when section changes
   useEffect(() => {
@@ -202,228 +193,192 @@ const BuilderPage = ({
   }, [activeSection]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <BuilderDonationBanner />
-      
-      {/* Mobile Header */}
-      <div className="lg:hidden bg-white shadow-sm sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-          <h1 className="text-lg font-semibold text-gray-800">
-            {activeSection.replace(/([A-Z])/g, ' $1').trim()}
-          </h1>
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={togglePreview}
-              className="p-2 rounded-lg text-gray-600 hover:bg-gray-100"
-              aria-label={showPreview ? 'Show Form' : 'Show Preview'}
-            >
-              {showPreview ? (
-                <span className="text-sm font-medium">Edit</span>
-              ) : (
-                <span className="text-sm font-medium">Preview</span>
-              )}
-            </button>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-gray-600 hover:bg-gray-100"
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? (
-                <XMarkIcon className="h-5 w-5" />
-              ) : (
-                <Bars3Icon className="h-5 w-5" />
-              )}
-            </button>
-          </div>
-        </div>
-        
-        {/* Mobile Stepper */}
-        <div className="px-4 pb-2 border-b border-gray-200">
-          <Stepper 
-            steps={sections} 
-            currentStep={activeSection} 
-            onStepClick={handleStepClick}
-          />
-        </div>
-      </div>
-
-      <div className="flex-1 flex flex-col lg:flex-row max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
-        {/* Left side - Form */}
-        <div 
-          className={`lg:col-span-1 bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 ${
-            isMobile && !showPreview ? 'block' : 'hidden lg:block'
-          }`}
-        >
-          <div className="p-4 border-b border-gray-200 hidden lg:block">
-            <h2 className="text-lg font-semibold text-gray-800">Resume Builder</h2>
-          </div>
-          
-          <div className="p-4 space-y-4">
-            <ResumeForm
-              activeSection={activeSection}
-              resumeData={resumeData}
-              setResumeData={setResumeData}
-              formErrors={formErrors}
-              setFormErrors={setFormErrors}
-              saving={saving}
-              setSaving={setSaving}
-              lastSaved={lastSaved}
-              setLastSaved={setLastSaved}
-            />
-          </div>
-        </div>
-        
-        {/* Right side - Preview */}
-        <div 
-          className={`lg:col-span-2 bg-white rounded-xl shadow-md flex flex-col overflow-hidden h-full transition-all duration-300 ${
-            isMobile && !showPreview ? 'hidden' : 'block'
-          }`}
-        >
-          <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-gray-800">
-              Resume Preview
-            </h2>
-            <span className="text-sm text-gray-500">
-              Template: {activeTemplate?.name || 'Modern'}
-            </span>
-          </div>
-          <div className="flex-1 overflow-auto p-2 sm:p-4 bg-gray-100 flex items-start justify-center">
-            <div 
-              ref={resumePreviewRef} 
-              className="bg-white shadow-lg"
-              style={{
-                width: '210mm',
-                minHeight: '297mm',
-                transform: isMobile ? 'scale(0.4) translateY(-15%)' : 'scale(0.5) translateY(0)',
-                transformOrigin: 'top center',
-                margin: '0 auto',
-                position: 'relative',
-                overflow: 'visible',
-                boxSizing: 'border-box',
-                maxWidth: '100%',
-                marginTop: isMobile ? '2rem' : '0',
-                marginBottom: isMobile ? '2rem' : '0'
-              }}
-              key={`resume-preview-${activeTemplate?.id || 'modern'}`}
-            >
-              <ResumeTemplatesComponent
-                activeTemplate={activeTemplate}
-                data={resumeData}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Sticky Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg p-3 z-20">
-        <div className="flex justify-between items-center max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
           <button
-            onClick={handlePrevious}
-            disabled={!hasPrevious}
-            className={`flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-              hasPrevious
-                ? 'text-blue-600 hover:bg-blue-50'
-                : 'text-gray-400 cursor-not-allowed'
-            }`}
+            onClick={() => window.history.back()}
+            className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4 sm:mb-0"
           >
-            <ArrowLeftIcon className="h-5 w-5" />
-            <span className="ml-1 hidden sm:inline">Previous</span>
+            <ArrowLeftIcon className="h-5 w-5 mr-2" />
+            Back to Dashboard
           </button>
           
-          <div className="flex space-x-2">
+          <div className="flex space-x-3 w-full sm:w-auto">
             <button
-              onClick={togglePreview}
-              className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 hidden lg:flex items-center"
-              aria-label={showPreview ? 'Show Form' : 'Show Preview'}
+              onClick={toggleEdit}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               {showPreview ? (
                 <>
-                  <span>Edit</span>
-                  <PencilIcon className="h-4 w-4 ml-1" />
+                  <PencilIcon className="-ml-1 mr-2 h-5 w-5 text-gray-500" />
+                  Edit
                 </>
               ) : (
                 <>
-                  <span>Preview</span>
-                  <EyeIcon className="h-4 w-4 ml-1" />
+                  <EyeIcon className="-ml-1 mr-2 h-5 w-5 text-gray-500" />
+                  Preview
                 </>
               )}
+            </button>
+            
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+            >
+              {isSaving ? 'Saving...' : 'Save'}
             </button>
             
             <button
               onClick={downloadPDF}
-              className="flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
-              <ArrowDownTrayIcon className="h-5 w-5" />
-              <span className="ml-1 hidden sm:inline">Download PDF</span>
+              <ArrowDownTrayIcon className="-ml-1 mr-2 h-5 w-5" />
+              <span className="hidden sm:inline">Download</span>
             </button>
           </div>
-          
-          <button
-            onClick={handleNext}
-            disabled={!hasNext}
-            className={`flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-              hasNext
-                ? 'text-blue-600 hover:bg-blue-50'
-                : 'text-gray-400 cursor-not-allowed'
-            }`}
-          >
-            <span className="mr-1 hidden sm:inline">Next</span>
-            <ArrowRightIcon className="h-5 w-5" />
-          </button>
         </div>
-      </div>
 
-      {/* Mobile Action Bar */}
-      {isMobile && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg p-3 z-20">
-          <div className="flex justify-between items-center max-w-7xl mx-auto">
-            <button
-              onClick={handlePrevious}
-              disabled={!hasPrevious}
-              className={`flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                hasPrevious
-                  ? 'text-blue-600 hover:bg-blue-50'
-                  : 'text-gray-400 cursor-not-allowed'
-              }`}
-            >
-              <ArrowLeftIcon className="h-5 w-5" />
-              <span className="sr-only">Previous</span>
-            </button>
+        {/* Mobile Navigation */}
+        <div className="mb-6 sm:hidden">
+          <div className="bg-white p-2 rounded-lg shadow-sm mb-4">
+            <Stepper 
+              steps={sections} 
+              currentStep={activeSection} 
+              onStepClick={(section) => {
+                setActiveSection(section);
+                setShowPreview(false);
+              }}
+            />
             
-            <div className="flex space-x-2">
+            <div className="flex justify-between mt-4">
               <button
-                onClick={togglePreview}
-                className="p-2 rounded-lg text-gray-600 hover:bg-gray-100"
-                aria-label={showPreview ? 'Show Form' : 'Show Preview'}
+                onClick={handlePrevious}
+                disabled={!hasPrevious}
+                className={`flex-1 mr-2 py-2 px-3 rounded-md text-sm font-medium ${
+                  hasPrevious
+                    ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-50 text-gray-400 cursor-not-allowed'
+                }`}
               >
-                {showPreview ? 'Edit' : 'Preview'}
+                <ArrowLeftIcon className="h-5 w-5 inline-block" />
               </button>
               
               <button
-                onClick={downloadPDF}
-                className="flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                onClick={handleNext}
+                disabled={!hasNext}
+                className={`flex-1 ml-2 py-2 px-3 rounded-md text-sm font-medium ${
+                  hasNext
+                    ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-50 text-gray-400 cursor-not-allowed'
+                }`}
               >
-                <ArrowDownTrayIcon className="h-5 w-5" />
-                <span className="ml-1 hidden sm:inline">Download</span>
+                <ArrowRightIcon className="h-5 w-5 inline-block" />
               </button>
             </div>
+          </div>
+        </div>
+
+        <div className="bg-white shadow-md rounded-lg overflow-hidden">
+          {/* Desktop Navigation */}
+          <div className="hidden sm:flex border-b border-gray-200">
+            {sections.map((section) => (
+              <button
+                key={section}
+                onClick={() => setActiveSection(section)}
+                className={`px-4 py-3 text-sm font-medium ${
+                  activeSection === section
+                    ? 'border-b-2 border-blue-500 text-blue-600'
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                {section.replace(/([A-Z])/g, ' $1').trim()}
+              </button>
+            ))}
+          </div>
+
+          <div className="p-4 sm:p-6 min-h-[60vh]">
+            <div className={!showPreview ? 'block' : 'hidden'}>
+              <ResumeForm
+                activeSection={activeSection}
+                setActiveSection={setActiveSection}
+                resumeData={resumeData}
+                setResumeData={setResumeData}
+                formErrors={formErrors}
+                setFormErrors={setFormErrors}
+                saving={saving}
+                setSaving={setSaving}
+                lastSaved={lastSaved}
+                setLastSaved={setLastSaved}
+              />
+            </div>
+            <div className={showPreview ? 'block' : 'hidden'}>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div 
+                  ref={resumePreviewRef}
+                  className="bg-white shadow-lg mx-auto"
+                  style={{
+                    width: '210mm',
+                    minHeight: '297mm',
+                    transform: isMobile ? 'scale(0.5) translateX(-50%)' : 'scale(0.8)',
+                    transformOrigin: isMobile ? 'top left' : 'top center',
+                    margin: isMobile ? '0 0 0 50%' : '0 auto',
+                    position: 'relative',
+                    overflow: 'visible',
+                    boxSizing: 'border-box',
+                    maxWidth: '100%',
+                  }}
+                >
+                  <ResumeTemplatesComponent
+                    activeTemplate={activeTemplate}
+                    data={resumeData}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Action Buttons */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg p-3 z-10 sm:hidden">
+          <div className="flex justify-between items-center max-w-4xl mx-auto">
+            <button
+              onClick={toggleEdit}
+              className="flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg"
+            >
+              {showPreview ? (
+                <>
+                  <PencilIcon className="h-5 w-5 mr-1" />
+                  <span>Edit</span>
+                </>
+              ) : (
+                <>
+                  <EyeIcon className="h-5 w-5 mr-1" />
+                  <span>Preview</span>
+                </>
+              )}
+            </button>
             
             <button
-              onClick={handleNext}
-              disabled={!hasNext}
-              className={`flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                hasNext
-                  ? 'text-blue-600 hover:bg-blue-50'
-                  : 'text-gray-400 cursor-not-allowed'
-              }`}
+              onClick={handleSave}
+              disabled={isSaving}
+              className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
-              <span className="sr-only">Next</span>
-              <ArrowRightIcon className="h-5 w-5" />
+              {isSaving ? 'Saving...' : 'Save'}
+            </button>
+            
+            <button
+              onClick={downloadPDF}
+              className="p-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+              title="Download PDF"
+            >
+              <ArrowDownTrayIcon className="h-5 w-5" />
             </button>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

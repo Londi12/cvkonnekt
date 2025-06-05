@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import ResumeParser from '../utils/resumeParser';
 
-export function ResumeForm({ activeSection, setActiveSection, resumeData, setResumeData, formErrors }) {
+export function ResumeForm({ activeSection, setActiveSection, resumeData, setResumeData, formErrors, setSaving, lastSaved, setLastSaved }) {
   const [uploadStatus, setUploadStatus] = React.useState({ loading: false, error: null });
 
   const handleInputChange = (section, field, value) => {
@@ -832,9 +832,9 @@ export function ResumeForm({ activeSection, setActiveSection, resumeData, setRes
   );
 
   const sections = [
-    { id: 'personal', label: 'Personal Info' },
-    { id: 'summary', label: 'Summary' },
-    { id: 'experience', label: 'Experience' },
+    { id: 'personalInfo', label: 'Personal Info' },
+    { id: 'professionalSummary', label: 'Summary' },
+    { id: 'workExperience', label: 'Experience' },
     { id: 'education', label: 'Education' },
     { id: 'certifications', label: 'Certifications' },
     { id: 'skills', label: 'Skills' },
@@ -843,12 +843,14 @@ export function ResumeForm({ activeSection, setActiveSection, resumeData, setRes
   ];
 
   const renderSection = () => {
+    if (!setActiveSection) return null;
+    
     switch (activeSection) {
-      case 'personal':
+      case 'personalInfo':
         return renderPersonalInfo();
-      case 'summary':
+      case 'professionalSummary':
         return renderProfessionalSummary();
-      case 'experience':
+      case 'workExperience':
         return renderWorkExperience();
       case 'education':
         return renderEducation();

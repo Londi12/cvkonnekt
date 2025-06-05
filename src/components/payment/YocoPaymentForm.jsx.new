@@ -1,15 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { XMarkIcon, CheckIcon } from '@heroicons/react/24/outline';
 import YOCO_CONFIG from "../../../config/yoco.config";
 
-const YocoPaymentForm = ({ 
-  amount, 
-  onSuccess, 
-  onError, 
-  onClose, 
-  planName = 'Premium',
-  billingCycle = 'monthly' 
-}) => {
+const YocoPaymentForm = ({ amount, onSuccess, onError, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [yocoSDK, setYocoSDK] = useState(null);
@@ -135,8 +128,8 @@ const YocoPaymentForm = ({
       const result = await yocoSDK.createToken({
         amountInCents: Math.round(amount * 100), // Convert to cents
         currency: YOCO_CONFIG.currency,
-        name: `CVKonnekt ${planName} Subscription`,
-        description: `${planName} subscription (${billingCycle})`,
+        name: 'CVKonnekt Subscription',
+        description: 'Premium subscription',
       });
 
       console.log('Token created:', result);
@@ -160,11 +153,7 @@ const YocoPaymentForm = ({
       <div className="mb-6">
         <div className="flex justify-between items-center mb-2">
           <span className="text-gray-600">Plan:</span>
-          <span className="font-semibold">{planName} Subscription</span>
-        </div>
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-gray-600">Billing:</span>
-          <span className="text-sm text-gray-600 capitalize">{billingCycle} billing</span>
+          <span className="font-semibold">Premium Subscription</span>
         </div>
         <div className="flex justify-between items-center mb-2">
           <span className="text-gray-600">Amount:</span>

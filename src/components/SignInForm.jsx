@@ -1,21 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../utils/AuthContext';
 
-const SignInForm = () => {
+const SignInForm = ({ onSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, isAuthenticated, user, signOut } = useAuth();
+  const { signIn } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // Redirect if already authenticated
-    if (isAuthenticated) {
-      navigate('/dashboard');
-    }
-  }, [isAuthenticated, navigate]);
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,22 +23,20 @@ const SignInForm = () => {
     setError('');
     
     try {
-      // First, sign in the user
-      const { data: { user: signedInUser }, error: signInError } = await signIn(email, password);
+      const { error: signInError } = await signIn(email, password);
       
       if (signInError) {
         throw signInError;
       }
       
-      // Check if user is admin
-      if (!signedInUser?.isAdmin) {
-        // Sign out non-admin users
-        await signOut();
-        throw new Error('Access denied. Please contact an administrator for access.');
+      // Call the onSuccess callback which will handle the navigation
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        // Fallback navigation
+        const from = location.state?.from?.pathname || '/';
+        navigate(from, { replace: true });
       }
-      
-      // Redirect to dashboard on successful admin login
-      navigate('/dashboard');
     } catch (err) {
       console.error('Sign in error:', err);
       setError(err.message || 'Failed to sign in. Please check your credentials.');
@@ -91,9 +83,18 @@ const SignInForm = () => {
           <button
             type="button"
             className="text-blue-600 hover:underline"
-            onClick={() => navigate('/signup')}
+            onClick={() => navigate('/signup', { state: { from: location.state?.from } })}
           >
             Sign Up
+          </button>
+        </div>
+        <div className="mt-4 text-center">
+          <button
+            type="button"
+            className="text-blue-600 hover:underline"
+            onClick={() => navigate('/forgot-password')}
+          >
+            Forgot Password?
           </button>
         </div>
       </form>

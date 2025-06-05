@@ -10,35 +10,24 @@ export function CoverLetterBuilder() {
   const navigate = useNavigate();
   const [uploadStatus, setUploadStatus] = useState({ loading: false, error: null });
   
-  const [coverLetterData, setCoverLetterData] = useState(() => {
-    const saved = localStorage.getItem('coverLetterData');
-    return saved ? JSON.parse(saved) : {
-      recipient: {
-        name: '',
-        position: '',
-        company: '',
-        address: ''
-      },
-      date: new Date().toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      }),
-      salutation: 'Dear Hiring Manager,',
-      body: 'I am excited to apply for the position at your company. My skills and experience make me a strong candidate for this role.\n\nIn my previous role, I [briefly describe relevant experience or achievement]. This experience has equipped me with [mention relevant skills].\n\nI am particularly drawn to [Company Name] because [specific reason]. I am confident that my background in [relevant field] and my [specific skill] make me a strong fit for your team.\n\nThank you for considering my application. I look forward to the opportunity to discuss how I can contribute to your team.',
-      closing: 'Sincerely,',
-      signature: '',
-      isEditing: true
-    };
+  const [coverLetterData, setCoverLetterData] = useState({
+    recipient: {
+      name: '',
+      position: '',
+      company: '',
+      address: ''
+    },
+    date: '',
+    salutation: '',
+    body: '',
+    closing: '',
+    signature: '',
+    isEditing: true
   });
 
   const [isEditing, setIsEditing] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Save to localStorage whenever coverLetterData changes
-  useEffect(() => {
-    localStorage.setItem('coverLetterData', JSON.stringify(coverLetterData));
-  }, [coverLetterData]);
 
   const handleInputChange = (section, field, value) => {
     setCoverLetterData(prev => ({

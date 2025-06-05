@@ -25,6 +25,11 @@ export function ProfileIcon() {
     navigate('/');
   };
 
+  // Add loading state check
+  if (isAuthenticated === undefined) {
+    return <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>;
+  }
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
@@ -70,7 +75,7 @@ export function ProfileIcon() {
             {isAuthenticated ? (
               <>
                 <div className="px-4 py-2 text-sm text-gray-700 border-b">
-                  Signed in as <span className="font-medium">{user.name}</span>
+                  Signed in as <span className="font-medium">{user?.name || user?.email || 'User'}</span>
                 </div>
                 <Link
                   to="/dashboard"

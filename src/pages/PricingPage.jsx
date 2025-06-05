@@ -95,21 +95,13 @@ export default function PricingPage() {
 
   const handleSubscribe = (planId, event) => {
     event.preventDefault();
-    setSelectedPlan(planId);
-    setIsModalOpen(true);
+    // Navigate to the subscription page for the selected plan
+    window.location.href = `/subscribe/${planId}`;
   };
 
   return (
     <>
-      <SubscriptionModal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setSelectedPlan(null);
-        }}
-        plan={selectedPlan}
-      />
-      
+      {/* Subscription modal removed - now using dedicated subscription page */}
       <div className="bg-white py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
