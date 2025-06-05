@@ -19,7 +19,15 @@ export default defineConfig({
     format: 'es',
   },
   optimizeDeps: {
-    include: ['pdfjs-dist']
+    include: [
+      'pdfjs-dist',
+      'react',
+      'react-dom',
+      '@headlessui/react',
+      'react-router-dom',
+      'react-swipeable',
+      'html2pdf.js'
+    ]
   },
   server: {
     port: 3000,
@@ -72,16 +80,7 @@ export default defineConfig({
     target: 'esnext',
     assetsInlineLimit: 4096
   },
-  optimizeDeps: {
-    include: [
-      'react',
-      'react-dom',
-      '@headlessui/react',
-      'react-router-dom',
-      'react-swipeable',
-      'html2pdf.js'
-    ]
-  },
+
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
