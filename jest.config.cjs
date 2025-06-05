@@ -1,7 +1,7 @@
 module.exports = {
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.(js|jsx)$': 'babel-jest',
+    '^.+\\.(js|jsx|mjs)$': 'babel-jest',
   },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
@@ -9,6 +9,13 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testMatch: ['**/__tests__/**/*.test.[jt]s?(x)'],
   transformIgnorePatterns: [
-    '/node_modules/(?!(@supabase/supabase-js)/)',
+    '/node_modules/(?!(.*\\.mjs$|@supabase/supabase-js)/)',
   ],
-}; 
+  extensionsToTreatAsEsm: ['.jsx'],
+  globals: {
+    'import.meta': {}
+  },
+  testEnvironmentOptions: {
+    url: 'http://localhost:3000',
+  }
+};

@@ -2,21 +2,20 @@
 process.env.VITE_SUPABASE_URL = 'https://test.supabase.co';
 process.env.VITE_SUPABASE_ANON_KEY = 'test-anon-key';
 
-// Mock fetch if needed
+// Mock fetch
 global.fetch = jest.fn();
 
-// Mock import.meta
-global.import = {
-  meta: {
-    env: {
-      VITE_SUPABASE_URL: 'https://test.supabase.co',
-      VITE_SUPABASE_ANON_KEY: 'eyJ-test-anon-key',
-      MODE: 'test'
-    }
-  }
+// Mock import.meta.env
+const MOCK_ENV = {
+  VITE_SUPABASE_URL: 'https://test.supabase.co',
+  VITE_SUPABASE_ANON_KEY: 'eyJ-test-anon-key',
+  MODE: 'test',
+  PROD: false,
+  DEV: true,
+  SSR: false
 };
 
-// Mock import.meta.env
+// Mock import.meta
 Object.defineProperty(global, 'import', {
   value: {
     meta: {
