@@ -69,23 +69,12 @@ export function SiteFooter() {
                   FAQ
                 </Link>
               </li>
-              <li>
-                <Link className="text-gray-600 hover:text-emerald-600 transition-colors" href="/help">
-                  Help Center
-                </Link>
-              </li>
             </ul>
           </div>
         </div>
         <div className="flex flex-col sm:flex-row justify-between items-center border-t pt-8 mt-8 gap-4">
           <p className="text-xs text-gray-600 text-center sm:text-left">© 2024 CVKonnekt. All rights reserved. Made with ❤️ for South Africa.</p>
           <div className="flex gap-6">
-            <Link className="text-xs text-gray-600 hover:text-emerald-600 transition-colors" href="/terms">
-              Terms of Service
-            </Link>
-            <Link className="text-xs text-gray-600 hover:text-emerald-600 transition-colors" href="/privacy">
-              Privacy Policy
-            </Link>
           </div>
         </div>
       </div>
