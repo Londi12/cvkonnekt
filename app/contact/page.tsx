@@ -40,10 +40,34 @@ export default function ContactPage() {
   })
 
   async function onSubmit(data: ContactFormValues) {
-    // In a real implementation, this would send the form data to your backend
-    console.log(data)
-    toast.success("Message sent successfully! We'll get back to you soon.")
-    form.reset()
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        // Handle specific error cases
+        if (response.status === 503) {
+          throw new Error("Email service is temporarily unavailable. Please try again later.")
+        }
+        if (response.status === 400) {
+          throw new Error(result.error || "Please check your input and try again.")
+        }
+        throw new Error(result.error || "Failed to send message. Please try again later.")
+      }
+
+      toast.success("Message sent successfully! We'll get back to you soon.")
+      form.reset()
+    } catch (error) {
+      console.error("Error sending message:", error)
+      toast.error(error instanceof Error ? error.message : "Failed to send message. Please try again later.")
+    }
   }
 
   return (
