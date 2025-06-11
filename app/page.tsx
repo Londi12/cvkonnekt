@@ -29,12 +29,11 @@ export default function LandingPage() {
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700">
-                    Create my CV
-                  </Button>
-                  <Button variant="outline" size="lg" onClick={() => setShowComingSoon(true)}>
-                    Upload my CV
-                  </Button>
+                  <Link href="/cv-templates">
+                    <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700">
+                      Create my CV
+                    </Button>
+                  </Link>
                 </div>
                 <div className="grid grid-cols-2 gap-4 mt-8">
                   <div className="p-4 bg-emerald-50 rounded-lg">

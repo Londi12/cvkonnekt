@@ -1,62 +1,39 @@
 "use client"
 
-import { Metadata } from "next"
-import { Mail, Send } from "lucide-react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-
+import { useState } from "react"
+import { z } from "zod"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 
-const formSchema = z.object({
+const contactFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
   subject: z.string().min(5, "Subject must be at least 5 characters"),
   message: z.string().min(10, "Message must be at least 10 characters"),
 })
 
-export const metadata: Metadata = {
-  title: "Contact Us",
-  description: "Get in touch with the CVKonnekt team. We're here to help with your CV building needs, technical support, or any questions about our professional CV builder service in South Africa.",
-  keywords: ["contact CVKonnekt", "CV builder support", "resume help", "South Africa", "customer service", "technical support"],
-  openGraph: {
-    title: "Contact CVKonnekt | Get Support",
-    description: "Get in touch with the CVKonnekt team. We're here to help with your CV building needs, technical support, or any questions about our professional CV builder service in South Africa.",
-    url: "/contact",
-  },
-  alternates: {
-    canonical: "/contact",
-  },
-}
-
 export default function ContactPage() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  })
+
+  async function onSubmit(values: z.infer<typeof contactFormSchema>) {
+    // In a real implementation, this would send the form data to your backend
+    console.log(values)
+    toast.success("Message sent successfully! We'll get back to you soon.")
+    setForm({
       name: "",
       email: "",
       subject: "",
       message: "",
-    },
-  })
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    // In a real implementation, this would send the form data to your backend
-    console.log(values)
-    toast.success("Message sent successfully! We'll get back to you soon.")
-    form.reset()
+    })
   }
 
   return (
