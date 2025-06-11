@@ -1,6 +1,21 @@
 import { Users, Heart } from "lucide-react"
+import { Metadata } from "next"
 
 import { Card, CardContent } from "@/components/ui/card"
+
+export const metadata: Metadata = {
+  title: "About CVKonnekt",
+  description: "Learn about CVKonnekt's mission to help South Africans create professional CVs and advance their careers. Discover our story, values, and commitment to empowering job seekers.",
+  keywords: ["about CVKonnekt", "CV builder story", "South Africa", "career development", "job search", "professional CV"],
+  openGraph: {
+    title: "About CVKonnekt | Our Story",
+    description: "Learn about CVKonnekt's mission to help South Africans create professional CVs and advance their careers. Discover our story, values, and commitment to empowering job seekers.",
+    url: "/about",
+  },
+  alternates: {
+    canonical: "/about",
+  },
+}
 
 export default function AboutPage() {
   return (

@@ -1,3 +1,4 @@
+import { Metadata } from "next"
 import { HelpCircle } from "lucide-react"
 
 import {
@@ -50,6 +51,20 @@ const faqItems = [
       "Yes, CVKonnekt is completely free to use. We believe that access to professional tools shouldn't be a barrier to employment. While we may introduce premium features in the future, our core CV and cover letter building functionality will remain free.",
   },
 ]
+
+export const metadata: Metadata = {
+  title: "Frequently Asked Questions",
+  description: "Find answers to common questions about CVKonnekt's CV builder, templates, and features. Learn how to create professional CVs and cover letters for the South African job market.",
+  keywords: ["CV FAQ", "resume FAQ", "CV builder help", "South Africa", "job search tips", "CV questions"],
+  openGraph: {
+    title: "FAQ - CVKonnekt CV Builder",
+    description: "Find answers to common questions about CVKonnekt's CV builder, templates, and features. Learn how to create professional CVs and cover letters for the South African job market.",
+    url: "/faq",
+  },
+  alternates: {
+    canonical: "/faq",
+  },
+}
 
 export default function FAQPage() {
   return (

@@ -1,3 +1,4 @@
+import { Metadata } from "next"
 import { ArrowRight, Search } from "lucide-react"
 import Link from "next/link"
 
@@ -6,6 +7,20 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CVPreview } from "@/components/cv-preview"
+
+export const metadata: Metadata = {
+  title: "CV Examples by Industry",
+  description: "Explore real CV examples for different industries and experience levels. Get inspired by professional CV samples for IT, Finance, Healthcare, Education, Marketing, and Engineering roles in South Africa.",
+  keywords: ["CV examples", "resume examples", "industry CVs", "job examples", "South Africa", "professional samples"],
+  openGraph: {
+    title: "CV Examples by Industry | CVKonnekt",
+    description: "Explore real CV examples for different industries and experience levels. Get inspired by professional CV samples for IT, Finance, Healthcare, Education, Marketing, and Engineering roles in South Africa.",
+    url: "/cv-examples",
+  },
+  alternates: {
+    canonical: "/cv-examples",
+  },
+}
 
 export default function CVExamplesPage() {
   // Industry categories

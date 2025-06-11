@@ -1,3 +1,4 @@
+import { Metadata } from "next"
 import { ArrowRight, Filter, Search } from "lucide-react"
 import Link from "next/link"
 
@@ -6,6 +7,20 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CVPreview } from "@/components/cv-preview"
+
+export const metadata: Metadata = {
+  title: "Professional CV Templates",
+  description: "Browse our collection of professional CV templates designed for the South African job market. Choose from various styles including corporate, modern, creative, and executive templates.",
+  keywords: ["CV templates", "resume templates", "professional CV", "South Africa", "job search", "career templates"],
+  openGraph: {
+    title: "Professional CV Templates | CVKonnekt",
+    description: "Browse our collection of professional CV templates designed for the South African job market. Choose from various styles including corporate, modern, creative, and executive templates.",
+    url: "/cv-templates",
+  },
+  alternates: {
+    canonical: "/cv-templates",
+  },
+}
 
 export default function CVTemplatesPage() {
   // Template categories
