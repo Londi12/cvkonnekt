@@ -2,10 +2,20 @@
 
 import { useState } from "react"
 import { z } from "zod"
+import { Mail, Send } from "lucide-react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 
@@ -16,141 +26,124 @@ const contactFormSchema = z.object({
   message: z.string().min(10, "Message must be at least 10 characters"),
 })
 
-export default function ContactPage() {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  })
+type ContactFormValues = z.infer<typeof contactFormSchema>
 
-  async function onSubmit(values: z.infer<typeof contactFormSchema>) {
-    // In a real implementation, this would send the form data to your backend
-    console.log(values)
-    toast.success("Message sent successfully! We'll get back to you soon.")
-    setForm({
+export default function ContactPage() {
+  const form = useForm<ContactFormValues>({
+    resolver: zodResolver(contactFormSchema),
+    defaultValues: {
       name: "",
       email: "",
       subject: "",
       message: "",
-    })
+    },
+  })
+
+  async function onSubmit(data: ContactFormValues) {
+    // In a real implementation, this would send the form data to your backend
+    console.log(data)
+    toast.success("Message sent successfully! We'll get back to you soon.")
+    form.reset()
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section className="w-full py-12 md:py-16 bg-gradient-to-br from-emerald-50 via-white to-teal-50">
-          <div className="container px-4 md:px-6 mx-auto">
-            <div className="max-w-3xl mx-auto text-center">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">Get in Touch</h1>
+    <div className="container mx-auto px-4 py-12">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">Contact Us</h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Have questions about our CV builder? Need help with your resume? We're here to help you succeed in your
+            job search journey.
+          </p>
+        </div>
 
-            </div>
-          </div>
-        </section>
-
-        {/* Contact Form Section */}
-        <section className="w-full py-12">
-          <div className="container px-4 md:px-6 mx-auto">
-            <div className="grid gap-8 md:grid-cols-2 lg:gap-12">
-              {/* Contact Information */}
-              <div className="space-y-6">
+        <div className="grid gap-8 md:grid-cols-2">
+          {/* Contact Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Get in Touch</CardTitle>
+              <CardDescription>We're here to help you build your perfect CV.</CardDescription>
+            </CardHeader>
+            <CardContent className="p-4">
+              <div className="flex items-start space-x-4">
+                <Mail className="h-5 w-5 text-emerald-600 mt-1" />
                 <div>
-                  <h2 className="text-2xl font-bold mb-4">Contact Information</h2>
-                  <p className="text-gray-600 mb-6">                  </p>
+                  <h3 className="font-medium">Email</h3>
+                  <p className="text-sm text-gray-600">info@cvkonnekt.co.za</p>
                 </div>
-
-                <Card className="border-emerald-200">
-                  <CardContent className="p-4">
-                    <div className="flex items-start space-x-4">
-                      <Mail className="h-5 w-5 text-emerald-600 mt-1" />
-                      <div>
-                        <h3 className="font-medium">Email</h3>
-                        <p className="text-sm text-gray-600">info@cvkonnekt.co.za</p>
-                        <p className="text-sm text-gray-500">We'll respond as soon as we can</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Contact Form */}
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Your name" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input placeholder="your.email@example.com" type="email" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="subject"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Subject</FormLabel>
-                          <FormControl>
-                            <Input placeholder="What's this about?" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="message"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Message</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              placeholder="Tell us how we can help..."
-                              className="min-h-[120px]"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700">
-                      <Send className="mr-2 h-4 w-4" />
-                      Send Message
-                    </Button>
-                  </form>
-                </Form>
-              </div>
-            </div>
+          {/* Contact Form */}
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Your name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="your.email@example.com" type="email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="subject"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Subject</FormLabel>
+                      <FormControl>
+                        <Input placeholder="What's this about?" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="message"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Message</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Tell us how we can help..."
+                          className="min-h-[120px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700">
+                  <Send className="mr-2 h-4 w-4" />
+                  Send Message
+                </Button>
+              </form>
+            </Form>
           </div>
-        </section>
-
-        
-      </main>
+        </div>
+      </div>
     </div>
   )
 } 
