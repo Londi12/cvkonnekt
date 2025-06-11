@@ -10,7 +10,10 @@ export const metadata = {
   title: "CVKonnekt - Professional CV Builder for South Africans",
   description:
     "Create professional CVs and cover letters designed for the South African job market. Free CV builder with templates and examples.",
-    generator: 'v0.dev'
+  generator: 'v0.dev',
+  verification: {
+    google: 'Om0gBmIjhXZGsSa8CcDA1KDPWJjqLBhCcxQ5Di3JOsw',
+  },
 }
 
 export default function RootLayout({
@@ -19,9 +22,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body>
-        <ThemeProvider attribute="class" defaultTheme="light">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="google-site-verification" content="Om0gBmIjhXZGsSa8CcDA1KDPWJjqLBhCcxQ5Di3JOsw" />
+      </head>
+      <body suppressHydrationWarning>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <AuthProvider>
             <div className="relative flex min-h-screen flex-col">
               <SiteHeader />

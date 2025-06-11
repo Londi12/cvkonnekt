@@ -15,9 +15,9 @@ export function SiteHeader() {
     { href: "/cv-templates", label: "CV Templates" },
     { href: "/cv-examples", label: "CV Examples" },
     { href: "/cover-letter-templates", label: "Cover Letters" },
-    { href: "/cover-letter-examples", label: "Examples" },
+    { href: "/cover-letter-examples", label: "Cover Letter Examples" },
     { href: "/about", label: "About" },
-    { href: "/faq", label: "FAQ" },
+    { href: "/contact", label: "Contact Us" },
   ]
 
   const handleSignOut = async () => {
@@ -92,67 +92,71 @@ export function SiteHeader() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+            className="md:hidden p-2.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
           >
-            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
 
         {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden border-t bg-white">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              {navigationItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              ))}
-              <div className="pt-4 border-t space-y-2">
-                {user || !isConfigured ? (
-                  <>
-                    <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
-                      <Button variant="ghost" size="sm" className="w-full justify-start text-gray-600">
-                        <User className="h-4 w-4 mr-2" />
-                        Dashboard
-                      </Button>
-                    </Link>
-                    {isConfigured && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleSignOut}
-                        className="w-full justify-start text-gray-600"
-                      >
-                        <LogOut className="h-4 w-4 mr-2" />
-                        Sign Out
-                      </Button>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                      <Button variant="ghost" size="sm" className="w-full justify-start text-gray-600">
-                        Log in
-                      </Button>
-                    </Link>
-                    <Link href="/create" onClick={() => setIsMobileMenuOpen(false)}>
-                      <Button size="sm" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white">
-                        Create CV
-                      </Button>
-                    </Link>
-                  </>
-                )}
-              </div>
+        <div
+          className={`md:hidden transition-all duration-200 ease-in-out ${
+            isMobileMenuOpen
+              ? "max-h-[500px] opacity-100 visible"
+              : "max-h-0 opacity-0 invisible"
+          } overflow-hidden`}
+        >
+          <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t">
+            {navigationItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="block px-4 py-3 text-base font-medium text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
+            <div className="pt-4 border-t space-y-2">
+              {user || !isConfigured ? (
+                <>
+                  <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="ghost" size="sm" className="w-full justify-start text-gray-600 py-3">
+                      <User className="h-5 w-5 mr-3" />
+                      Dashboard
+                    </Button>
+                  </Link>
+                  {isConfigured && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleSignOut}
+                      className="w-full justify-start text-gray-600 py-3"
+                    >
+                      <LogOut className="h-5 w-5 mr-3" />
+                      Sign Out
+                    </Button>
+                  )}
+                </>
+              ) : (
+                <>
+                  <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="ghost" size="sm" className="w-full justify-start text-gray-600 py-3">
+                      Log in
+                    </Button>
+                  </Link>
+                  <Link href="/create" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button size="sm" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3">
+                      Create CV
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
-        )}
+        </div>
       </div>
     </header>
   )

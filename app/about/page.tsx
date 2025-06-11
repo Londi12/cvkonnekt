@@ -11,11 +11,10 @@ export default function AboutPage() {
           <div className="container px-4 md:px-6 mx-auto">
             <div className="max-w-3xl mx-auto text-center">
               <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                Built by South Africans, for South Africans
+                Built by a South African, for South Africans
               </h1>
               <p className="mt-4 text-gray-600 md:text-xl">
-                The story of how one woman's vision to democratize access to professional CV building tools is changing
-                lives across Mzansi, one CV at a time.
+                A vision to democratize access to professional CV building tools, one CV at a time.
               </p>
             </div>
           </div>
@@ -26,7 +25,7 @@ export default function AboutPage() {
           <div className="container px-4 md:px-6 mx-auto">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Our Mission & Values</h2>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Mission & Values</h2>
                 <p className="max-w-[900px] text-gray-600 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                   CVKonnekt was built on the belief that everyone deserves access to professional opportunities,
                   regardless of their economic background.
@@ -91,7 +90,7 @@ export default function AboutPage() {
                 "Ubuntu teaches us that we are all connected. When we lift each other up, we all rise together.
                 CVKonnekt is my way of living that philosophy through technology."
               </blockquote>
-              <cite className="text-emerald-100 text-lg">— Londiwe, Founder</cite>
+              <cite className="text-emerald-100 text-lg">— Londiwe Shibe, Founder</cite>
             </div>
           </div>
         </section>
